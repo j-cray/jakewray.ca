@@ -37,16 +37,3 @@ ssr = [
   "frontend/ssr",
   "frontend/hydrate",
 ]
-
-[package.metadata.leptos]
-output-name = "jakewray_ca"
-site-root = "target/site"
-site-pkg-dir = "pkg"
-style-file = "../style/main.scss"
-assets-dir = "../assets"
-site-addr = "127.0.0.1:3000"
-reload-port = 3001
-bin-package = "backend"
-bin-target = "backend"
-lib-package = "frontend"
-lib-target = "frontend"
