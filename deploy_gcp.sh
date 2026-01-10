@@ -2,7 +2,7 @@
 set -e
 
 # Configuration
-PROJECT_ID="your-project-id"
+PROJECT_ID="jakewray-portfolio"
 INSTANCE_NAME="jakewray-portfolio"
 ZONE="us-central1-a"
 MACHINE_TYPE="e2-medium"
