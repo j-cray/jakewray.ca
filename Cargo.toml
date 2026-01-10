@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["frontend", "backend", "shared", "migration", "tmp_context_test"]
+members = ["frontend", "backend", "shared", "migration"]
 
 [workspace.dependencies]
 leptos = { version = "0.7" }
