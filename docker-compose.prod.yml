@@ -1,5 +1,5 @@
 services:
-  app:
+  portfolio:
     build: .
     restart: always
     environment:
@@ -37,7 +37,7 @@ services:
     networks:
       - jake_net
 
-  npm:
+  proxy:
     image: 'jc21/nginx-proxy-manager:latest'
     restart: unless-stopped
     ports:
@@ -48,7 +48,7 @@ services:
       - ./npm_data:/data
       - ./npm_letsencrypt:/etc/letsencrypt
     depends_on:
-      - app
+      - portfolio
     networks:
       - jake_net
 
