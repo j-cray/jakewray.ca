@@ -25,7 +25,7 @@ pub fn App() -> impl IntoView {
             <div class="min-h-screen flex flex-col">
                 <Navbar/>
                 <main class="flex-grow">
-                    <Routes>
+                    <Routes fallback=|| view! { <NotFound/> }>
                         // Public Routes
                         <Route path="/" view=HomePage/>
                         <Route path="/about" view=AboutPage/>
@@ -42,15 +42,18 @@ pub fn App() -> impl IntoView {
                         <Route path="/admin/login" view=AdminLoginPage/>
                         <Route path="/admin/compose" view=AdminComposer/>
                         <Route path="/admin/sync" view=AdminSyncManager/>
-                        <Route path="/admin/media" view=move || view! { "Media Library Placeholder" }/>
-
-                        <Route path="/*any" view=NotFound/>
+                        <Route path="/admin/media" view=MediaLibraryPlaceholder/>
                     </Routes>
                 </main>
                 <Footer/>
             </div>
         </Router>
     }
+}
+
+#[component]
+fn MediaLibraryPlaceholder() -> impl IntoView {
+    view! { "Media Library Placeholder" }
 }
 
 #[component]
