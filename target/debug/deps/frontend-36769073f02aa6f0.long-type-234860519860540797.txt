@@ -1,0 +1,2 @@
+RoutePropsBuilder<Segments, View, TypedBuilderFields>
+RoutePropsBuilder<&str, fn() -> impl RenderHtml {leptos_router::components::Outlet}, ((&str,), (fn() -> impl RenderHtml {leptos_router::components::Outlet},), ())>

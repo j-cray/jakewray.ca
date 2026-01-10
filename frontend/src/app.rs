@@ -38,11 +38,13 @@ pub fn App() -> impl IntoView {
                         <Route path="/programming" view=ProgrammingPage/>
 
                         // Admin Routes
-                        <Route path="/admin" view=AdminDashboard/> // Should redirect to login if not auth
-                        <Route path="/admin/login" view=AdminLoginPage/>
-                        <Route path="/admin/compose" view=AdminComposer/>
-                        <Route path="/admin/sync" view=AdminSyncManager/>
-                        <Route path="/admin/media" view=MediaLibraryPlaceholder/>
+                        <Route path="/admin" view=Outlet>
+                            <Route path="" view=AdminDashboard/>
+                            <Route path="login" view=AdminLoginPage/>
+                            <Route path="compose" view=AdminComposer/>
+                            <Route path="sync" view=AdminSyncManager/>
+                            <Route path="media" view=MediaLibraryPlaceholder/>
+                        </Route>
                     </Routes>
                 </main>
                 <Footer/>
