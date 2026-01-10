@@ -60,7 +60,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let server_fn_handler = move |req: axum::extract::Request| async move {
         // Manually inject state
         leptos_axum::handle_server_fns(
-            axum::extract::State(options_clone_2.clone()),
             req
         ).await.into_response()
     };
@@ -120,25 +119,3 @@ async fn get_static_file(uri: axum::http::Uri, root: &str) -> AxumResponse {
     }
 }
 
-async fn file_and_error_handler(uri: axum::http::Uri, axum::extract::State(options): axum::extract::State<leptos::LeptosOptions>, req: axum::extract::Request) -> AxumResponse {
-    let root = options.site_root.clone();
-    let res = get_static_file(uri.clone(), &root).await.unwrap();
-
-    if res.status() == axum::http::StatusCode::OK {
-        res.into_response()
-    } else {
-        let handler = leptos_axum::render_app_to_stream(options.to_owned(), App);
-        handler(req).await.into_response()
-    }
-}
-
-async fn get_static_file(uri: axum::http::Uri, root: &str) -> Result<axum::http::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
-    let req = axum::http::Request::builder().uri(uri.clone()).body(axum::body::Body::empty()).unwrap();
-    match tower_http::services::ServeDir::new(root).oneshot(req).await {
-        Ok(res) => Ok(res.map(axum::body::Body::new)),
-        Err(err) => Err((
-            axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Something went wrong: {}", err),
-        )),
-    }
-}
