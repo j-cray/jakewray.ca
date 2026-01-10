@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install cargo-binstall for faster tool installation
 RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
 
-# Install cargo-leptos and sass
-RUN cargo binstall cargo-leptos -y
+# Install cargo-leptos, sass, and sqlx-cli
+RUN cargo binstall cargo-leptos sqlx-cli -y
 RUN npm install -g sass
 
 # Add WASM target
@@ -33,6 +33,7 @@ RUN apt-get update -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy artifacts from builder
+COPY --from=builder /usr/local/cargo/bin/sqlx /usr/local/bin/sqlx
 COPY --from=builder /app/target/release/backend /app/backend
 COPY --from=builder /app/target/site /app/site
 

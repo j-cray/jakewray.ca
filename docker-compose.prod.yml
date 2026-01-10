@@ -24,14 +24,14 @@ services:
       - jake_net
 
   migration:
-    image: ghcr.io/launchbadge/sqlx-cli:latest
+    build: .
     depends_on:
       - db
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     volumes:
       - ./migrations:/migrations
-    command: migrate run --source /migrations
+    command: sqlx migrate run --source /migrations
     networks:
       - jake_net
 
