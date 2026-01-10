@@ -1,4 +1,4 @@
-FROM rust:1.80-bookworm as builder
+FROM rust:bookworm as builder
 # Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     nodejs \
