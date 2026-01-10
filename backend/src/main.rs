@@ -3,7 +3,7 @@ use axum::{
     Router,
 };
 use leptos::prelude::*;
-use leptos::provide_context;
+use leptos::context::provide_context;
 use leptos_axum::{generate_route_list, LeptosRoutes};
 use sqlx::postgres::PgPoolOptions;
 use std::net::SocketAddr;
