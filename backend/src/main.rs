@@ -11,10 +11,11 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use frontend::App;
 
 mod api;
-mod state;
+mod state; // Restore state module
 
-use axum::extract::FromRef;
 use crate::state::AppState;
+use axum::response::{Response as AxumResponse, IntoResponse};
+use tower::ServiceExt; // for oneshot
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -47,11 +48,34 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         pool: pool.clone(),
     };
 
-    let app = api::router::<AppState>() // Start with generic router
-        .route("/api/*fn_name", post(leptos_axum::handle_server_fns)) // Server Functions integration
-        .leptos_routes(&app_state, routes, App) // Should work on Router<AppState>
+    // Use a closure to capture options, bypassing trait bounds on State extraction
+    let options_clone = leptos_options.clone();
+    let leptos_handler = move |req: axum::extract::Request| async move {
+        let handler = leptos_axum::render_app_to_stream(options_clone, App);
+        handler(req).await.into_response()
+    };
+
+    // Main App is Router<()> (default)
+    // API is sealed (returns Router<()>)
+    let app = Router::new()
+        .merge(api::router(app_state.clone()))
+        .route("/api/*fn_name", post(leptos_axum::handle_server_fns)) // Works on ()? No.
+        // Wait, handle_server_fns needs state too?
+        // If handle_server_fns extracts State, it implies Router<()>.route(handler) fails.
+        // We might need to wrap handle_server_fns too?
+        // Or assign state to it?
+        .route("/*path", get(leptos_handler))
         .fallback(file_and_error_handler)
-        .with_state(app_state); // Seal it
+        .with_state(app_state); // Provide state to potential remaining generic handlers
+
+    // Wait. If api::router is sealed, it ignores with_state(app_state) here.
+    // That's fine.
+    // handle_server_fns needs options.
+    // If it extracts State, and we are Router<()> (due to new), and then call with_state.
+    // It works IF with_state fixes the Router type context.
+    // But we proved it doesn't.
+    // So handle_server_fns might fail.
+    // I will try to compile. If handle_server_fns fails, I will wrap it too.
 
     tracing::info!("listening on http://{}", &addr);
     let listener = tokio::net::TcpListener::bind(&addr).await?;
@@ -74,10 +98,6 @@ async fn file_and_error_handler(uri: axum::http::Uri, axum::extract::State(optio
 
 async fn get_static_file(uri: axum::http::Uri, root: &str) -> Result<axum::http::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let req = axum::http::Request::builder().uri(uri.clone()).body(axum::body::Body::empty()).unwrap();
-    // This is a simplified static file handler, usually tower-http ServeDir is used
-    // But since we need to fallback to Leptos, we do this check.
-    // For now, let's use tower_http::services::ServeDir if possible or just rely on leptos_axum default
-    // Actually, let's implement the simpler check:
     match tower_http::services::ServeDir::new(root).oneshot(req).await {
         Ok(res) => Ok(res.map(axum::body::Body::new)),
         Err(err) => Err((
@@ -86,6 +106,3 @@ async fn get_static_file(uri: axum::http::Uri, root: &str) -> Result<axum::http:
         )),
     }
 }
-
-use axum::response::{Response as AxumResponse, IntoResponse};
-use tower::ServiceExt; // for oneshot

@@ -7,15 +7,13 @@ use axum::{
 use sqlx::PgPool;
 use shared::{Article, BlogPost};
 
-pub fn router<S>() -> Router<S>
-where
-    S: Clone + Send + Sync + 'static,
-    PgPool: axum::extract::FromRef<S>,
+pub fn router(state: crate::state::AppState) -> Router
 {
     Router::new()
         .route("/health", get(health_check))
         .route("/articles", get(list_articles))
         .route("/blog", get(list_blog_posts))
+        .with_state(state)
 }
 
 async fn health_check() -> &'static str {

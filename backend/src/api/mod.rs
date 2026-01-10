@@ -4,12 +4,8 @@ use sqlx::PgPool;
 mod admin;
 mod public;
 
-pub fn router<S>() -> Router<S>
-where
-    S: Clone + Send + Sync + 'static,
-    PgPool: axum::extract::FromRef<S>,
-{
+pub fn router(state: crate::state::AppState) -> Router {
     Router::new()
-        .merge(public::router())
-        .nest("/admin", admin::router())
+        .merge(public::router(state.clone()))
+        .nest("/admin", admin::router(state.clone()))
 }
