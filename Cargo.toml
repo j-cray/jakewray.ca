@@ -23,6 +23,7 @@ panic = "abort"
 
 [[workspace.metadata.leptos]]
 # The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
+name = "jakewray_ca"
 output-name = "jakewray_ca"
 # The site root folder is where cargo-leptos generate all output. WARNING: This is relative to the workspace root
 site-root = "target/site"

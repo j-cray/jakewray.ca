@@ -40,7 +40,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let app = Router::new()
         .merge(api::router()) // Mount API routes
-        // .route("/api/*fn_name", post(leptos_axum::handle_server_fns)) // Server Functions integration
+        .route("/api/*fn_name", post(leptos_axum::handle_server_fns)) // Server Functions integration
         .leptos_routes(&leptos_options, routes, App)
         .fallback(file_and_error_handler)
         .with_state(pool)
