@@ -83,7 +83,7 @@ async fn sync_terracestandard(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::er
 
         // Upsert
         println!("Syncing: {}", title);
-        sqlx::query!(
+        sqlx::query(
             r#"
             INSERT INTO articles (wp_id, slug, title, content, published_at, author, origin)
             VALUES ($1, $2, $3, $4, $5, 'Jake Wray', 'synced')
@@ -92,12 +92,12 @@ async fn sync_terracestandard(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::er
                 content = EXCLUDED.content,
                 updated_at = NOW()
             "#,
-            wp_id,
-            slug,
-            title,
-            content,
-            published_at
         )
+        .bind(wp_id)
+        .bind(slug)
+        .bind(title)
+        .bind(content)
+        .bind(published_at)
         .execute(pool)
         .await?;
     }

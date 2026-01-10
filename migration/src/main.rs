@@ -54,7 +54,8 @@ async fn import_jakewray(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::
             .with_timezone(&chrono::Utc);
 
         // Check if exists
-        let exists: Option<uuid::Uuid> = sqlx::query_scalar!("SELECT id FROM blog_posts WHERE slug = $1", slug)
+        let exists: Option<uuid::Uuid> = sqlx::query_scalar("SELECT id FROM blog_posts WHERE slug = $1")
+            .bind(slug.clone())
             .fetch_optional(pool)
             .await?;
 
@@ -64,13 +65,13 @@ async fn import_jakewray(pool: &sqlx::PgPool) -> Result<(), Box<dyn std::error::
         }
 
         println!("Inserting: {}", title);
-        sqlx::query!(
+        sqlx::query(
             "INSERT INTO blog_posts (slug, title, content, published_at) VALUES ($1, $2, $3, $4)",
-            slug,
-            title,
-            content,
-            published_at
         )
+        .bind(slug)
+        .bind(title)
+        .bind(content)
+        .bind(published_at)
         .execute(pool)
         .await?;
     }
