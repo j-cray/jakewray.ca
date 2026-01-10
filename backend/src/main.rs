@@ -47,12 +47,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         pool: pool.clone(),
     };
 
-    let app = Router::new()
-        .merge(api::router(app_state.clone())) // Mount API routes
+    let app = api::router::<AppState>() // Start with generic router
         .route("/api/*fn_name", post(leptos_axum::handle_server_fns)) // Server Functions integration
-        .leptos_routes(&app_state, routes, App)
+        .leptos_routes(&app_state, routes, App) // Should work on Router<AppState>
         .fallback(file_and_error_handler)
-        .with_state(app_state);
+        .with_state(app_state); // Seal it
 
     tracing::info!("listening on http://{}", &addr);
     let listener = tokio::net::TcpListener::bind(&addr).await?;
