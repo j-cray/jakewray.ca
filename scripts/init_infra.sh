@@ -4,14 +4,23 @@ set -e
 # Configuration
 PROJECT_ID="jakewray-portfolio"
 INSTANCE_NAME="jakewray-portfolio"
-ZONE="us-central1-a"
-MACHINE_TYPE="e2-medium"
-IMAGE_FAMILY="debian-12"
+ZONE="us-west1-a"
+MACHINE_TYPE="c4a-standard-4" # Google Axion (ARM): 4 vCPU, 16GB RAM
+IMAGE_FAMILY="debian-12-arm64"
 IMAGE_PROJECT="debian-cloud"
 
 echo "Checking Google Cloud Infrastructure..."
 
-# 1. Create VM if not exists
+# 1. Setup Static IP
+ADDRESS_NAME="$INSTANCE_NAME-ip"
+if ! gcloud compute addresses describe $ADDRESS_NAME --project=$PROJECT_ID --region=us-west1 &>/dev/null; then
+    echo "Creating static IP address..."
+    gcloud compute addresses create $ADDRESS_NAME --project=$PROJECT_ID --region=us-west1
+fi
+STATIC_IP=$(gcloud compute addresses describe $ADDRESS_NAME --project=$PROJECT_ID --region=us-west1 --format='get(address)')
+echo "Using Static IP: $STATIC_IP"
+
+# 2. Create VM if not exists
 if ! gcloud compute instances describe $INSTANCE_NAME --project=$PROJECT_ID --zone=$ZONE &>/dev/null; then
     echo "Creating VM instance..."
     gcloud compute instances create $INSTANCE_NAME \
@@ -20,6 +29,7 @@ if ! gcloud compute instances describe $INSTANCE_NAME --project=$PROJECT_ID --zo
         --machine-type=$MACHINE_TYPE \
         --image-family=$IMAGE_FAMILY \
         --image-project=$IMAGE_PROJECT \
+        --address=$STATIC_IP \
         --tags=http-server,https-server \
         --metadata=startup-script='#! /bin/bash
         # Install Docker

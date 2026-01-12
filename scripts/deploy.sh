@@ -4,7 +4,7 @@ set -e
 TARGET=${1:-all}
 PROJECT_ID="jakewray-portfolio"
 INSTANCE_NAME="jakewray-portfolio"
-ZONE="us-central1-a"
+ZONE="us-west1-a"
 
 echo "Deploying target: $TARGET"
 
