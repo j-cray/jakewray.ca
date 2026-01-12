@@ -8,42 +8,40 @@ DOMAIN="jakewray.dev"
 EMAIL="admin@jakewray.dev"
 
 echo "Initializing SSL certificates for $DOMAIN..."
-
-# Create dummy certificates for nginx to start
-echo "Creating dummy certificates..."
-mkdir -p ~/app/certbot/conf/live/$DOMAIN
-openssl req -x509 -nodes -newkey rsa:2048 -days 1 \
-    -keyout ~/app/certbot/conf/live/$DOMAIN/privkey.pem \
-    -out ~/app/certbot/conf/live/$DOMAIN/fullchain.pem \
-    -subj "/CN=$DOMAIN"
-
-# Start nginx with dummy certificates
-echo "Starting nginx..."
 cd ~/app
-sudo docker compose -f docker-compose.prod.yml up -d proxy
 
-# Wait for nginx to start
-echo "Waiting for nginx to start..."
-sleep 5
+# Ensure services are up (except proxy which needs certs)
+echo "Starting backend services..."
+sudo docker compose -f docker-compose.prod.yml up -d db portfolio
 
-# Delete dummy certificates
-echo "Removing dummy certificates..."
-sudo docker compose -f docker-compose.prod.yml exec proxy rm -rf /etc/nginx/ssl/live/$DOMAIN
+# Wait for backend to be ready
+echo "Waiting for backend to be ready..."
+sleep 10
 
-# Request real certificates
-echo "Requesting Let's Encrypt certificates..."
-sudo docker compose -f docker-compose.prod.yml run --rm certbot certonly \
-    --webroot \
-    --webroot-path=/var/www/certbot \
+# Stop proxy if running
+sudo docker compose -f docker-compose.prod.yml stop proxy 2>/dev/null || true
+
+# Get certificates using certbot standalone mode (since nginx isn't running yet)
+echo "Requesting Let's Encrypt certificates using standalone mode..."
+sudo docker compose -f docker-compose.prod.yml run --rm -p 80:80 certbot certonly \
+    --standalone \
+    --preferred-challenges http \
     --email $EMAIL \
     --agree-tos \
     --no-eff-email \
     -d $DOMAIN \
     -d www.$DOMAIN
 
-# Reload nginx to use new certificates
-echo "Reloading nginx..."
-sudo docker compose -f docker-compose.prod.yml exec proxy nginx -s reload
+# Start proxy with the new certificates
+echo "Starting nginx with SSL certificates..."
+sudo docker compose -f docker-compose.prod.yml up -d proxy
+
+# Start certbot renewal service
+echo "Starting certbot renewal service..."
+sudo docker compose -f docker-compose.prod.yml up -d certbot
 
 echo "SSL certificates initialized successfully!"
-echo "Certificates will auto-renew via certbot service."
+echo "Nginx is now running with HTTPS enabled."
+echo "Certificates will auto-renew via certbot service (checks twice daily)."
+
+
