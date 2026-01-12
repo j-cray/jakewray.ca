@@ -38,24 +38,33 @@ services:
       - jake_net
 
   proxy:
-    image: caddy:2-alpine
+    image: nginx:alpine
     restart: unless-stopped
     ports:
       - '80:80'
       - '443:443'
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - certbot_conf:/etc/nginx/ssl:ro
+      - certbot_www:/var/www/certbot:ro
     depends_on:
       - portfolio
     networks:
       - jake_net
 
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - jake_net
+
 volumes:
   db_data:
-  caddy_data:
-  caddy_config:
+  certbot_conf:
+  certbot_www:
 
 networks:
   jake_net:

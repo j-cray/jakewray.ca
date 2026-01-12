@@ -12,7 +12,7 @@ echo "Deploying target: $TARGET"
 echo "Copying project files..."
 gcloud compute scp --recurse \
     ./Dockerfile \
-    ./Caddyfile \
+    ./nginx.conf \
     ./docker-compose.prod.yml \
     ./migrations \
     ./Cargo.toml \
