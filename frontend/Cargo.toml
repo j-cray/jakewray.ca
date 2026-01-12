@@ -15,6 +15,7 @@ shared = { path = "../shared" }
 wasm-bindgen = { workspace = true }
 console_error_panic_hook = { workspace = true }
 tracing = { workspace = true }
+thaw = "0.4"
 
 [features]
 hydrate = ["leptos/hydrate"]
