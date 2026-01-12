@@ -29,6 +29,7 @@ if ! gcloud compute instances describe $INSTANCE_NAME --project=$PROJECT_ID --zo
         --machine-type=$MACHINE_TYPE \
         --image-family=$IMAGE_FAMILY \
         --image-project=$IMAGE_PROJECT \
+        --boot-disk-size=64GB \
         --address=$STATIC_IP \
         --tags=http-server,https-server \
         --metadata=startup-script='#! /bin/bash
