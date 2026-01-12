@@ -33,7 +33,6 @@ pub fn App() -> impl IntoView {
             <Stylesheet id="leptos" href="/pkg/jakewray_ca.css"/>
         </head>
         <body>
-            <ConfigProvider theme>
                 <Router>
                     <div class="min-h-screen flex flex-col bg-gray-50/50">
                         <Navbar/>
@@ -63,7 +62,6 @@ pub fn App() -> impl IntoView {
                         <Footer/>
                     </div>
                 </Router>
-            </ConfigProvider>
         </body>
         </html>
     }
