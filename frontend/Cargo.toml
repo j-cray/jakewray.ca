@@ -19,4 +19,4 @@ thaw = "0.4"
 
 [features]
 hydrate = ["leptos/hydrate"]
-ssr = ["leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr"]
+ssr = ["leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "thaw/ssr"]
