@@ -39,9 +39,8 @@ elif [ "$TARGET" = "backend" ]; then
     # Usually strictly not needed, but good practice if backend container IP changes.
     # But Nginx Proxy Manager usually handles it dynamic DNS.
 elif [ "$TARGET" = "frontend" ]; then
-    echo "Frontend is part of the backend binary in this setup (SSR)."
-    echo "Please use 'backend' or 'all' target."
-    exit 1
+    echo "Rebuilding Frontend (as part of Backend/SSR)..."
+    sudo docker compose -f docker-compose.prod.yml up -d --build --no-deps portfolio
 else
     echo "Unknown target: $TARGET"
     exit 1
