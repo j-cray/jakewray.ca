@@ -42,9 +42,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr = leptos_options.site_addr;
     let routes = generate_route_list(App);
 
+    // Generate a key for signing cookies. In production, this should be consistent.
+    let key = axum_extra::extract::cookie::Key::generate();
+
     let app_state = AppState {
         leptos_options: leptos_options.clone(),
         pool: pool.clone(),
+        key,
     };
 
     let options_clone = leptos_options.clone();

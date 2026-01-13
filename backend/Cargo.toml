@@ -20,6 +20,8 @@ tower = { workspace = true }
 tower-http = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+bcrypt = "0.15"
+axum-extra = { version = "0.9", features = ["cookie", "signed"] }
 shared = { path = "../shared" }
 leptos = { workspace = true, features = ["ssr"] }
 leptos_meta = { workspace = true, features = ["ssr"] }
@@ -30,9 +32,4 @@ frontend = { path = "../frontend" }
 
 [features]
 default = []
-ssr = [
-  "leptos/ssr",
-  "leptos_meta/ssr",
-  "leptos_router/ssr",
-  "frontend/ssr",
-]
+ssr = ["leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "frontend/ssr"]

@@ -45,10 +45,12 @@ pub fn App() -> impl IntoView {
                                 <Route path="/about" view=AboutPage/>
                                 <Route path="/contact" view=ContactPage/>
                                 <Route path="/admin" view=AdminLoginPage/>
-                                <Route path="/admin/dashboard" view=AdminDashboard/>
-                                <Route path="/admin/composer" view=AdminComposer/>
-                                <Route path="/admin/sync" view=AdminSyncManager/>
-                                <Route path="/admin/media" view=MediaLibraryPlaceholder/>
+                                <ParentRoute path="/admin" view=crate::pages::admin::AdminProtectedLayout>
+                                    <Route path="dashboard" view=AdminDashboard/>
+                                    <Route path="composer" view=AdminComposer/>
+                                    <Route path="sync" view=AdminSyncManager/>
+                                    <Route path="media" view=MediaLibraryPlaceholder/>
+                                </ParentRoute>
                                 <Route path="/journalism" view=JournalismPage/>
                                 <Route path="/personal" view=PersonalPage/>
                                 <Route path="/creative-writing" view=CreativeWritingPage/>
