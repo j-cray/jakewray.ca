@@ -31,6 +31,10 @@ site-root = "target/site"
 site-pkg-dir = "pkg"
 # The source style file. If it ends with .sass or .scss then it will be compiled by dart-sass into CSS. The CSS file will then be used by your app.
 style-file = "style/main.scss"
+# Tailwind Input File
+tailwind-input-file = "style/input.css"
+# Tailwind Config File
+tailwind-config-file = "tailwind.config.js"
 # The assets folder.
 assets-dir = "assets"
 # The IP and port (ex: 127.0.0.1:3000) where the server serves the content. Use it in your server setup.

@@ -19,6 +19,7 @@ time = "0.3.36"
 leptonic = { git = "https://github.com/lpotthast/leptonic", branch = "migrate-to-leptos-0.7" }
 leptonic-theme = { git = "https://github.com/lpotthast/leptonic", branch = "migrate-to-leptos-0.7" }
 icondata = "0.4"
+gloo-net = "0.6"
 
 [features]
 hydrate = ["leptos/hydrate", "leptonic/hydrate"]

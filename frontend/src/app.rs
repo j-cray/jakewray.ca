@@ -79,15 +79,15 @@ fn MediaLibraryPlaceholder() -> impl IntoView {
 #[component]
 fn HomePage() -> impl IntoView {
     view! {
-        <Stack orientation=StackOrientation::Vertical spacing=Size::Em(4.0) style="padding: 2em; max-width: 1400px; margin: 0 auto;">
-            <header style="text-align: center; padding: 4em 0;">
-                <H1 style="margin-bottom: 0.5em; font-size: 3.5em; font-weight: 800; letter-spacing: -0.05em;">
+        <div class="p-8 max-w-[1400px] mx-auto flex flex-col gap-16">
+            <header class="text-center py-16">
+                <H1 class="mb-2 text-6xl font-extrabold tracking-tighter">
                     <span class="text-gradient">"JAKE WRAY"</span>
                 </H1>
-                <P style="font-size: 1.5em; color: var(--text-muted); max-width: 600px; margin: 0 auto;">
+                <P class="text-2xl text-gray-400 max-w-[600px] mx-auto">
                     "Journalist. Developer. Photographer. Creating extensive archives of the present."
                 </P>
-                <div style="margin-top: 2em; display: flex; gap: 1em; justify-content: center;">
+                <div class="mt-8 flex gap-4 justify-center">
                     <Button variant=ButtonVariant::Filled size=ButtonSize::Big>
                         "Read Journal"
                     </Button>
@@ -97,29 +97,27 @@ fn HomePage() -> impl IntoView {
                 </div>
             </header>
 
-            <Grid spacing=Size::Em(2.0)>
-                <Row>
-                    <Col xs=12 sm=4>
-                        <Card class="glass" style="height: 100%; transition: transform 0.2s;">
-                            <H3 style="font-weight: bold; color: var(--brand-color);">"Latest Articles"</H3>
-                            <P>"Deep dives into technology, culture, and the intersection of both."</P>
-                        </Card>
-                    </Col>
-                    <Col xs=12 sm=4>
-                        <Card class="glass" style="height: 100%; transition: transform 0.2s;">
-                            <H3 style="font-weight: bold; color: var(--brand-color);">"Recent Projects"</H3>
-                            <P>"Software engineering experiments, open source contributions, and more."</P>
-                        </Card>
-                    </Col>
-                    <Col xs=12 sm=4>
-                        <Card class="glass" style="height: 100%; transition: transform 0.2s;">
-                            <H3 style="font-weight: bold; color: var(--brand-color);">"Visuals"</H3>
-                            <P>"A collection of photography and digital art capturing moments in time."</P>
-                        </Card>
-                    </Col>
-                </Row>
-            </Grid>
-        </Stack>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                <div class="h-full">
+                    <Card class="glass h-full transition-transform hover:scale-105">
+                        <H3 class="font-bold text-brand">"Latest Articles"</H3>
+                        <P>"Deep dives into technology, culture, and the intersection of both."</P>
+                    </Card>
+                </div>
+                <div class="h-full">
+                    <Card class="glass h-full transition-transform hover:scale-105">
+                        <H3 class="font-bold text-brand">"Recent Projects"</H3>
+                        <P>"Software engineering experiments, open source contributions, and more."</P>
+                    </Card>
+                </div>
+                <div class="h-full">
+                    <Card class="glass h-full transition-transform hover:scale-105">
+                        <H3 class="font-bold text-brand">"Visuals"</H3>
+                        <P>"A collection of photography and digital art capturing moments in time."</P>
+                    </Card>
+                </div>
+            </div>
+        </div>
     }
 }
 
