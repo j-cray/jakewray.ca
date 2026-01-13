@@ -49,7 +49,7 @@ pub async fn perform_setup(username: String, password: String) -> Result<(), Ser
     )
     .execute(&pool)
     .await
-    .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+    .map_err(|e: sqlx::Error| ServerFnError::ServerError(e.to_string()))?;
 
     Ok(())
 }

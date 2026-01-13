@@ -1105,6 +1105,7 @@ dependencies = [
 name = "frontend"
 version = "0.1.0"
 dependencies = [
+ "axum-extra",
  "bcrypt",
  "console_error_panic_hook",
  "gloo-net",

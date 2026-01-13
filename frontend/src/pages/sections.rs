@@ -1,31 +1,58 @@
-use leptos::*; use leptos::prelude::*;
-
+use leptos::prelude::*;
 use shared::{Article, BlogPost};
-use gloo_net::http::Request;
 
-async fn fetch_articles() -> Vec<Article> {
-    Request::get("/api/articles")
-        .send()
+#[server]
+pub async fn get_articles() -> Result<Vec<Article>, ServerFnError> {
+    use sqlx::{PgPool, Row};
+    let pool = use_context::<PgPool>().ok_or(ServerFnError::ServerError("Pool not found".to_string()))?;
+
+    let articles = sqlx::query("SELECT id, wp_id, slug, title, subtitle, excerpt, content, cover_image_url, author, published_at, origin FROM articles ORDER BY published_at DESC LIMIT 20")
+        .map(|row: sqlx::postgres::PgRow| Article {
+            id: row.get("id"),
+            wp_id: row.get("wp_id"),
+            slug: row.get("slug"),
+            title: row.get("title"),
+            subtitle: row.get("subtitle"),
+            excerpt: row.get("excerpt"),
+            content: row.get("content"),
+            cover_image_url: row.get("cover_image_url"),
+            author: row.get("author"),
+            published_at: row.get("published_at"),
+            origin: row.get("origin"),
+        })
+        .fetch_all(&pool)
         .await
-        .unwrap()
-        .json()
-        .await
-        .unwrap_or_default()
+        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+
+    Ok(articles)
 }
 
-async fn fetch_blog_posts() -> Vec<BlogPost> {
-    Request::get("/api/blog")
-        .send()
+#[server]
+pub async fn get_blog_posts() -> Result<Vec<BlogPost>, ServerFnError> {
+    use sqlx::{PgPool, Row};
+    let pool = use_context::<PgPool>().ok_or(ServerFnError::ServerError("Pool not found".to_string()))?;
+
+    let posts = sqlx::query("SELECT id, slug, title, content, published_at, tags FROM blog_posts ORDER BY published_at DESC LIMIT 20")
+        .map(|row: sqlx::postgres::PgRow| BlogPost {
+            id: row.get("id"),
+            slug: row.get("slug"),
+            title: row.get("title"),
+            content: row.get("content"),
+            published_at: row.get("published_at"),
+            tags: row.get("tags"),
+        })
+        .fetch_all(&pool)
         .await
-        .unwrap()
-        .json()
-        .await
-        .unwrap_or_default()
+        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+
+    Ok(posts)
 }
 
 #[component]
 pub fn JournalismPage() -> impl IntoView {
-    let articles = Resource::new(|| (), |_| fetch_articles());
+    let articles = Resource::new(|| (), |_| async move {
+        get_articles().await.unwrap_or_default()
+    });
 
     view! {
         <div class="container mx-auto py-12 px-4">
@@ -63,7 +90,9 @@ pub fn JournalismPage() -> impl IntoView {
 
 #[component]
 pub fn PersonalPage() -> impl IntoView {
-    let posts = Resource::new(|| (), |_| fetch_blog_posts());
+    let posts = Resource::new(|| (), |_| async move {
+        get_blog_posts().await.unwrap_or_default()
+    });
 
     view! {
         <div class="container mx-auto py-12 px-4">
