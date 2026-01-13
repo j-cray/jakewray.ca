@@ -17,7 +17,58 @@ pub fn router(state: crate::state::AppState) -> Router
         .route("/login", post(login))
         .route("/logout", post(logout))
         .route("/me", get(me))
+        .route("/setup/status", get(check_setup_status))
+        .route("/setup", post(perform_setup))
         .with_state(state)
+}
+
+#[derive(Serialize)]
+struct SetupStatus {
+    required: bool,
+}
+
+async fn check_setup_status(State(pool): State<PgPool>) -> impl IntoResponse {
+    let count = sqlx::query!("SELECT COUNT(*) as count FROM users")
+        .fetch_one(&pool)
+        .await
+        .map(|r| r.count.unwrap_or(0))
+        .unwrap_or(0);
+
+    Json(SetupStatus { required: count == 0 })
+}
+
+use bcrypt::{hash, DEFAULT_COST};
+
+async fn perform_setup(
+    State(pool): State<PgPool>,
+    Json(payload): Json<LoginPayload>,
+) -> impl IntoResponse {
+    // 1. Verify no users exist (race condition possible but low risk for this specific use case)
+    let count = sqlx::query!("SELECT COUNT(*) as count FROM users")
+        .fetch_one(&pool)
+        .await
+        .map(|r| r.count.unwrap_or(0))
+        .unwrap_or(0);
+
+    if count > 0 {
+        return (StatusCode::FORBIDDEN, "Setup already completed").into_response();
+    }
+
+    // 2. Create user
+    let hashed_password = hash(payload.password, DEFAULT_COST).unwrap();
+
+    let result = sqlx::query!(
+        "INSERT INTO users (username, password_hash) VALUES ($1, $2)",
+        payload.username,
+        hashed_password
+    )
+    .execute(&pool)
+    .await;
+
+    match result {
+        Ok(_) => (StatusCode::OK, "Admin created").into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    }
 }
 
 #[derive(Deserialize)]

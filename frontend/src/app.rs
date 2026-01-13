@@ -44,6 +44,7 @@ pub fn App() -> impl IntoView {
                                 <Route path="/" view=HomePage/>
                                 <Route path="/about" view=AboutPage/>
                                 <Route path="/contact" view=ContactPage/>
+                                <Route path="/setup" view=crate::pages::setup::SetupPage/>
                                 <Route path="/admin" view=AdminLoginPage/>
                                 <ParentRoute path="/admin" view=crate::pages::admin::AdminProtectedLayout>
                                     <Route path="dashboard" view=AdminDashboard/>
