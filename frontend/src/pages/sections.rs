@@ -122,7 +122,7 @@ pub fn PersonalPage() -> impl IntoView {
                                     <div class="glass p-8 rounded-xl hover:bg-white/5 transition duration-300 border border-white/10">
                                         <div class="flex items-center justify-between mb-4">
                                             <span class="text-xs font-bold uppercase tracking-wider text-brand-dim">
-                                                {post.tags.unwrap_or_default().get(0).cloned().unwrap_or("Blog".to_string())}
+                                                {post.tags.clone().unwrap_or_default().get(0).cloned().unwrap_or("Blog".to_string())}
                                             </span>
                                             <span class="text-xs text-gray-500">{post.published_at.format("%B %d, %Y").to_string()}</span>
                                         </div>
@@ -134,7 +134,7 @@ pub fn PersonalPage() -> impl IntoView {
                                             {post.content.chars().take(150).collect::<String>()} "..."
                                         </p>
                                         <div class="flex items-center gap-2">
-                                            {post.tags.unwrap_or_default().iter().skip(1).map(|tag| view! {
+                                            {post.tags.clone().unwrap_or_default().iter().skip(1).map(|tag| view! {
                                                 <span class="px-2 py-1 text-xs rounded-md bg-white/5 text-gray-400">{tag.clone()}</span>
                                             }).collect_view()}
                                         </div>
