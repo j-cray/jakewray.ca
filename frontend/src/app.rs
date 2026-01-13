@@ -9,9 +9,7 @@ use crate::pages::contact::ContactPage;
 use crate::pages::sections::{
     CreativeWritingPage, JournalismPage, MusicPage, PersonalPage, ProgrammingPage, VisualArtPage,
 };
-use leptonic::components::root::Root;
 use leptonic::prelude::*;
-use leptonic::theme::LeptonicTheme;
 use leptos::prelude::*;
 // use leptonic_theme::LeptonicTheme;
 use leptos_meta::*;
