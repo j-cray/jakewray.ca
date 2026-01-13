@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use bcrypt::verify;
 use std::sync::Arc;
+use uuid::Uuid;
 
 pub fn router(state: crate::state::AppState) -> Router
 {
@@ -40,7 +41,7 @@ async fn login(
         Ok(Some(row)) => {
             use sqlx::Row;
             let password_hash: String = row.try_get("password_hash").unwrap_or_default(); // Handle error properly in prod
-            let id: i32 = row.try_get("id").unwrap_or_default();
+            let id: Uuid = row.try_get("id").unwrap_or_default();
 
             if verify(&payload.password, &password_hash).unwrap_or(false) {
                 // Password correct
