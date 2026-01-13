@@ -1,11 +1,57 @@
 use leptos::prelude::*;
 use leptos_router::hooks::*;
-use gloo_net::http::Request;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone)]
-struct SetupStatus {
+pub struct SetupStatus {
     required: bool,
+}
+
+#[server(GetSetupStatus, "/api/setup/status")]
+pub async fn get_setup_status() -> Result<SetupStatus, ServerFnError> {
+    use sqlx::PgPool;
+    let pool = use_context::<PgPool>().ok_or(ServerFnError::ServerError("Pool not found".to_string()))?;
+
+    let count = sqlx::query!("SELECT COUNT(*) as count FROM users")
+        .fetch_one(&pool)
+        .await
+        .map(|r| r.count.unwrap_or(0))
+        .unwrap_or(0);
+
+    Ok(SetupStatus { required: count == 0 })
+}
+
+#[server(PerformSetup, "/api/setup")]
+pub async fn perform_setup(username: String, password: String) -> Result<(), ServerFnError> {
+    use sqlx::PgPool;
+    use bcrypt::{hash, DEFAULT_COST};
+
+    let pool = use_context::<PgPool>().ok_or(ServerFnError::ServerError("Pool not found".to_string()))?;
+
+    // 1. Verify no users exist
+    let count = sqlx::query!("SELECT COUNT(*) as count FROM users")
+        .fetch_one(&pool)
+        .await
+        .map(|r| r.count.unwrap_or(0))
+        .unwrap_or(0);
+
+    if count > 0 {
+        return Err(ServerFnError::ServerError("Setup already completed".to_string()));
+    }
+
+    // 2. Create user
+    let hashed_password = hash(&password, DEFAULT_COST).map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+
+    sqlx::query!(
+        "INSERT INTO users (username, password_hash) VALUES ($1, $2)",
+        username,
+        hashed_password
+    )
+    .execute(&pool)
+    .await
+    .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+
+    Ok(())
 }
 
 #[component]
@@ -17,11 +63,7 @@ pub fn SetupPage() -> impl IntoView {
 
     // Check if setup is actually required
     let setup_status = Resource::new(|| (), |_| async move {
-        let resp = Request::get("/api/admin/setup/status").send().await;
-        match resp {
-             Ok(r) => r.json::<SetupStatus>().await.ok(),
-             Err(_) => None,
-        }
+        get_setup_status().await.ok()
     });
 
     let on_submit = move |ev: leptos::ev::SubmitEvent| {
@@ -43,23 +85,14 @@ pub fn SetupPage() -> impl IntoView {
         }
 
         leptos::task::spawn_local(async move {
-            let resp = Request::post("/api/admin/setup")
-                .json(&serde_json::json!({
-                    "username": user,
-                    "password": pass
-                }))
-                .expect("Failed to create request")
-                .send()
-                .await;
-
-            match resp {
-                Ok(response) if response.ok() => {
+            match perform_setup(user, pass).await {
+                Ok(_) => {
                      let navigate = use_navigate();
                      // Redirect to login after successful creation
                      navigate("/admin", Default::default());
                 }
-                _ => {
-                    set_error.set(Some("Failed to create admin user".to_string()));
+                Err(e) => {
+                    set_error.set(Some(format!("Failed to create admin user: {}", e)));
                 }
             }
         });
@@ -84,25 +117,25 @@ pub fn SetupPage() -> impl IntoView {
                                 <input
                                     type="text"
                                     placeholder="Username"
-                                    class="p-3 rounded-md bg-black/50 border border-white/10 text-white focus:border-brand focus:outline-none"
+                                    class="p-2 rounded-md bg-black/50 border border-white/10 text-white focus:border-brand focus:outline-none"
                                     on:input=move |ev| set_username.set(event_target_value(&ev))
                                     prop:value=username
                                 />
                                 <input
                                     type="password"
                                     placeholder="Password"
-                                    class="p-3 rounded-md bg-black/50 border border-white/10 text-white focus:border-brand focus:outline-none"
+                                    class="p-2 rounded-md bg-black/50 border border-white/10 text-white focus:border-brand focus:outline-none"
                                     on:input=move |ev| set_password.set(event_target_value(&ev))
                                      prop:value=password
                                 />
                                 <input
                                     type="password"
                                     placeholder="Confirm Password"
-                                    class="p-3 rounded-md bg-black/50 border border-white/10 text-white focus:border-brand focus:outline-none"
+                                    class="p-2 rounded-md bg-black/50 border border-white/10 text-white focus:border-brand focus:outline-none"
                                     on:input=move |ev| set_confirm_password.set(event_target_value(&ev))
                                      prop:value=confirm_password
                                 />
-                                <button type="submit" class="bg-brand text-black p-3 rounded-md font-bold hover:bg-brand-dim transition mt-2">
+                                <button type="submit" class="bg-brand text-black p-2 rounded-md font-bold hover:bg-brand-dim transition mt-2">
                                     "Create Account"
                                 </button>
                             </form>
@@ -110,7 +143,7 @@ pub fn SetupPage() -> impl IntoView {
                     </div>
                  }.into_any(),
                  Some(Some(_)) => view! {
-                     <div class="test-center pt-20 text-white">
+                     <div class="text-center pt-20 text-white">
                         "Setup already completed. " <a href="/admin" class="text-brand">"Go to Login"</a>
                      </div>
                  }.into_any(),

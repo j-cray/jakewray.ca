@@ -48,14 +48,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let app_state = AppState {
         leptos_options: leptos_options.clone(),
         pool: pool.clone(),
-        key,
+        key: key.clone(),
     };
 
     let options_clone = leptos_options.clone();
+    let pool_clone = pool.clone();
+    let key_clone = key.clone();
     let leptos_handler = move |req: axum::extract::Request| async move {
         let handler = leptos_axum::render_app_to_stream_with_context(
              move || {
                  provide_context(options_clone.clone());
+                 provide_context(pool_clone.clone());
+                 provide_context(key_clone.clone());
              },
              App
         );
@@ -71,8 +75,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     let options_clone_3 = leptos_options.clone();
+    let pool_clone_3 = pool.clone();
+    let key_clone_3 = key.clone();
     let fallback_handler = move |uri: axum::http::Uri, req: axum::extract::Request| async move {
-        file_and_error_handler(uri, options_clone_3.clone(), req).await.into_response()
+        file_and_error_handler(uri, options_clone_3.clone(), pool_clone_3, key_clone_3, req).await.into_response()
     };
 
     let app = Router::new()
@@ -91,7 +97,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 async fn file_and_error_handler(
     uri: axum::http::Uri,
-    options: LeptosOptions, // Changed from State<LeptosOptions>
+    options: LeptosOptions,
+    pool_clone: sqlx::PgPool,
+    key_clone: axum_extra::extract::cookie::Key,
     req: axum::extract::Request
 ) -> AxumResponse {
     let root = options.site_root.clone();
@@ -103,6 +111,8 @@ async fn file_and_error_handler(
         let handler = leptos_axum::render_app_to_stream_with_context(
             move || {
                 provide_context(options.clone());
+                provide_context(pool_clone.clone());
+                provide_context(key_clone.clone());
             },
             App
         );

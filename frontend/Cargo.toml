@@ -20,7 +20,16 @@ leptonic = { git = "https://github.com/lpotthast/leptonic", branch = "migrate-to
 leptonic-theme = { git = "https://github.com/lpotthast/leptonic", branch = "migrate-to-leptos-0.7" }
 icondata = "0.4"
 gloo-net = "0.6"
+sqlx = { workspace = true, optional = true }
+bcrypt = { version = "0.15", optional = true }
 
 [features]
 hydrate = ["leptos/hydrate", "leptonic/hydrate"]
-ssr = ["leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "leptonic/ssr"]
+ssr = [
+  "leptos/ssr",
+  "leptos_meta/ssr",
+  "leptos_router/ssr",
+  "leptonic/ssr",
+  "dep:sqlx",
+  "dep:bcrypt",
+]
