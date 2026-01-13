@@ -19,7 +19,7 @@ pub fn Navbar() -> impl IntoView {
         move |text: &'static str, path: &'static str| {
             let navigate = navigate.clone();
             view! {
-                <Button on_click=move |_| { navigate(path, Default::default()); set_drawer_open.set(false); } variant=ButtonVariant::Ghost style="font-weight: 500;">
+                <Button on_press=move |_| { navigate(path, Default::default()); set_drawer_open.set(false); } variant=ButtonVariant::Flat attr:style="font-weight: 500;">
                     {text}
                 </Button>
             }
@@ -42,19 +42,18 @@ pub fn Navbar() -> impl IntoView {
                     {nav_btn("Art", "/visual-art")}
                     {nav_btn("Code", "/programming")}
 
-                    <Button on_click=move |_| navigate.clone()("/about", Default::default()) variant=ButtonVariant::Filled>
+                    <Button on:click=move |_| navigate.clone()("/about", Default::default()) variant=ButtonVariant::Filled>
                         "About"
                     </Button>
                 </Stack>
 
-                // Mobile Menu Toggle
-                <Button on_click=move |_| set_drawer_open.set(true) variant=ButtonVariant::Ghost class="md:hidden">
-                    <Icon icon=icondata::BsList style="font-size: 1.5em;"/>
+                <Button on:click=move |_| set_drawer_open.set(true) variant=ButtonVariant::Flat class="md:hidden">
+                    <Icon icon=icondata::BsList attr:style="font-size: 1.5em;"/>
                 </Button>
             </Stack>
         </AppBar>
 
-        <Drawer side=DrawerSide::Right shown=is_drawer_open style="padding: 2em; background: var(--surface-color);">
+        <Drawer side=DrawerSide::Right shown=is_drawer_open attr:style="padding: 2em; background: var(--surface-color);">
             <Stack orientation=StackOrientation::Vertical spacing=Size::Em(1.5)>
                 <H3>"Menu"</H3>
                 {nav_btn("Journalism", "/journalism")}
@@ -64,7 +63,7 @@ pub fn Navbar() -> impl IntoView {
                 {nav_btn("Art", "/visual-art")}
                 {nav_btn("Code", "/programming")}
                 {nav_btn("About", "/about")}
-                <Button on_click=move |_| set_drawer_open.set(false) variant=ButtonVariant::Outlined>
+                <Button on:click=move |_| set_drawer_open.set(false) variant=ButtonVariant::Outlined>
                     "Close"
                 </Button>
             </Stack>

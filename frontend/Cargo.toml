@@ -16,8 +16,8 @@ wasm-bindgen = { workspace = true }
 console_error_panic_hook = { workspace = true }
 tracing = { workspace = true }
 time = "0.3.36"
-leptonic = { git = "https://github.com/lpotthast/leptonic", branch = "main" }
-leptonic-theme = { git = "https://github.com/lpotthast/leptonic", branch = "main" }
+leptonic = { git = "https://github.com/lpotthast/leptonic", branch = "migrate-to-leptos-0.7" }
+leptonic-theme = { git = "https://github.com/lpotthast/leptonic", branch = "migrate-to-leptos-0.7" }
 icondata = "0.4"
 
 [features]
