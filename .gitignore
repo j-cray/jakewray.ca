@@ -6,3 +6,4 @@ result
 npm_data/
 npm_letsencrypt/
 media_mount/
+node_modules/
