@@ -20,15 +20,15 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
-        <Html lang="en"/>
-        <Head>
+        <html lang="en">
+        <head>
             <Title text="Jake Wray"/>
             <Meta name="description" content="Journalist, Programmer, Photographer."/>
             <Meta charset="utf-8"/>
             <Meta name="viewport" content="width=device-width, initial-scale=1"/>
             <Stylesheet id="leptos" href="/pkg/jakewray_ca.css"/>
-        </Head>
-        <Body>
+        </head>
+        <body>
             <Router>
                 <div class="min-h-screen flex flex-col bg-gray-900 text-white">
                     <Navbar/>
@@ -57,7 +57,8 @@ pub fn App() -> impl IntoView {
                 </div>
             </Router>
             <Scripts/>
-        </Body>
+        </body>
+        </html>
     }
 }
 
