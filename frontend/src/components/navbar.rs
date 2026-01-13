@@ -22,16 +22,16 @@ pub fn Navbar() -> impl IntoView {
 
     view! {
         <header class="glass sticky top-0 z-50">
-            <div class="flex items-center justify-between w-full h-full px-4">
-                <h3 class="m-0 cursor-pointer" on:click={
+            <div class="flex items-center justify-between w-full h-full px-6 py-3">
+                <h3 class="m-0 cursor-pointer text-2xl" on:click={
                     let navigate = navigate.clone();
                     move |_| navigate("/", Default::default())
                 }>
-                    <span class="text-gradient" style="font-weight: bold;">"JAKE WRAY"</span>
+                    <span class="text-gradient font-bold tracking-tight">"JAKE WRAY"</span>
                 </h3>
 
                 // Desktop Menu
-                <div class="hidden md:flex gap-2">
+                <div class="hidden md:flex gap-4 items-center">
                     {nav_btn("Journalism", "/journalism")}
                     {nav_btn("Personal", "/personal")}
                     {nav_btn("Writing", "/creative-writing")}
@@ -42,30 +42,47 @@ pub fn Navbar() -> impl IntoView {
                     <button on:click={
                         let navigate = navigate.clone();
                         move |_| navigate("/about", Default::default())
-                    } class="btn-filled">
+                    } class="btn-primary">
                         "About"
                     </button>
                 </div>
 
-                <button on:click=move |_| set_drawer_open.set(true) class="md:hidden text-2xl font-bold">
+                <button on:click=move |_| set_drawer_open.set(true) class="md:hidden text-2xl text-white hover:text-brand transition">
+                    <span class="sr-only">"Open menu"</span>
                     "☰"
                 </button>
             </div>
         </header>
 
         {move || is_drawer_open.get().then(|| view! {
-            <div style="position: fixed; top: 0; right: 0; height: 100vh; width: 300px; background: #1a1a1a; padding: 2em; z-index: 100; border-left: 1px solid #333;" class="shadow-xl">
-                 <div class="flex flex-col gap-6">
-                    <h3 class="text-xl font-bold">"Menu"</h3>
-                    {nav_btn("Journalism", "/journalism")}
-                    {nav_btn("Personal", "/personal")}
-                    {nav_btn("Writing", "/creative-writing")}
-                    {nav_btn("Music", "/music")}
-                    {nav_btn("Art", "/visual-art")}
-                    {nav_btn("Code", "/programming")}
-                    {nav_btn("About", "/about")}
-                    <button on:click=move |_| set_drawer_open.set(false) class="btn-outlined">
-                        "Close"
+             <div class="fixed inset-0 z-[100] flex justify-end">
+                // Backdrop
+                <div
+                    class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+                    on:click=move |_| set_drawer_open.set(false)
+                ></div>
+
+                // Drawer
+                <div class="relative w-80 h-full bg-[#1a1a1a] shadow-2xl border-l border-white/10 p-6 flex flex-col gap-6 transform transition-transform animate-in slide-in-from-right duration-300">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-white">"Menu"</h3>
+                        <button on:click=move |_| set_drawer_open.set(false) class="text-gray-400 hover:text-white">
+                            "✕"
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+                        {nav_btn("Journalism", "/journalism")}
+                        {nav_btn("Personal", "/personal")}
+                        {nav_btn("Writing", "/creative-writing")}
+                        {nav_btn("Music", "/music")}
+                        {nav_btn("Art", "/visual-art")}
+                        {nav_btn("Code", "/programming")}
+                        {nav_btn("About", "/about")}
+                    </div>
+
+                    <button on:click=move |_| set_drawer_open.set(false) class="btn-secondary mt-auto w-full">
+                        "Close Menu"
                     </button>
                 </div>
             </div>

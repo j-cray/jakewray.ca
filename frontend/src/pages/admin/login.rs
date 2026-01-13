@@ -41,32 +41,41 @@ pub fn AdminLoginPage() -> impl IntoView {
     view! {
         <div class="flex items-center justify-center min-h-screen bg-gray-900 text-white">
             <div class="card w-full max-w-md bg-white/5 p-8 rounded-lg shadow-md border border-white/10 glass">
-                <h1 class="text-2xl font-bold mb-6 text-center text-brand">"Admin Login"</h1>
+                <h1 class="text-3xl font-bold mb-8 text-center text-white font-heading tracking-wide">"Admin Login"</h1>
 
                 {move || error.get().map(|e| view! {
-                    <div class="bg-red-500/20 text-red-200 p-3 rounded mb-4 text-center border border-red-500/50">
+                    <div class="bg-red-500/10 border border-red-500/30 text-red-200 p-4 rounded-lg mb-6 text-center text-sm">
                         {e}
                     </div>
                 })}
 
-                <form on:submit=on_submit class="flex flex-col gap-4">
-                    <input
-                        type="text"
-                        placeholder="Username"
-                        class="p-3 rounded-md bg-black/50 border border-white/10 text-white focus:border-brand focus:outline-none"
-                        on:input=move |ev| set_username.set(event_target_value(&ev))
-                        prop:value=username
-                    />
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        class="p-3 rounded-md bg-black/50 border border-white/10 text-white focus:border-brand focus:outline-none"
-                        on:input=move |ev| set_password.set(event_target_value(&ev))
-                         prop:value=password
-                    />
-                    <button type="submit" class="bg-brand text-black p-3 rounded-md font-bold hover:bg-brand-dim transition">
+                <form on:submit=on_submit class="flex flex-col gap-5">
+                    <div class="space-y-1">
+                        <label class="text-sm text-gray-400 ml-1">"Username"</label>
+                        <input
+                            type="text"
+                            placeholder="Enter username"
+                            class="input"
+                            on:input=move |ev| set_username.set(event_target_value(&ev))
+                            prop:value=username
+                        />
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-sm text-gray-400 ml-1">"Password"</label>
+                        <input
+                            type="password"
+                            placeholder="Enter password"
+                            class="input"
+                            on:input=move |ev| set_password.set(event_target_value(&ev))
+                            prop:value=password
+                        />
+                    </div>
+
+                    <button type="submit" class="btn-primary w-full mt-4">
                         "Login"
                     </button>
+
 
                      <a href="/" class="text-center text-sm text-gray-500 hover:text-white transition">"Back to Home"</a>
                 </form>

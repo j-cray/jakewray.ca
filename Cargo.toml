@@ -41,8 +41,9 @@ site-pkg-dir = "pkg"
 style-file = "style/main.scss"
 # Tailwind Input File
 tailwind-input-file = "style/input.css"
-# Tailwind Config File
-tailwind-config-file = "tailwind.config.js"
+# Force usage of npm-installed tailwindcss
+tailwind-bin = "tailwindcss"
+
 # The assets folder.
 assets-dir = "assets"
 # The IP and port (ex: 127.0.0.1:3000) where the server serves the content. Use it in your server setup.

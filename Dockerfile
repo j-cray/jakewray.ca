@@ -28,6 +28,11 @@ FROM deps as builder
 WORKDIR /app
 COPY . .
 
+# Install node dependencies (for Tailwind v4)
+RUN npm install
+ENV PATH="/app/node_modules/.bin:${PATH}"
+
+
 ENV SQLX_OFFLINE=true
 
 # Debug: Build backend and frontend explicitly to see errors
