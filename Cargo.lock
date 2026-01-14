@@ -1072,6 +1072,7 @@ dependencies = [
  "axum-extra",
  "bcrypt",
  "console_error_panic_hook",
+ "getrandom 0.2.17",
  "gloo-net",
  "icondata",
  "leptos",
@@ -1206,8 +1207,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ff2abc00be7fca6ebc474524697ae276ad847ad0a6b3faa4bcb027e9a4614ad0"
 dependencies = [
  "cfg-if",
+ "js-sys",
  "libc",
  "wasi",
+ "wasm-bindgen",
 ]
 
 [[package]]
