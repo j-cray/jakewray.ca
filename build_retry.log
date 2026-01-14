@@ -1,0 +1,58 @@
+warning: Git tree '/home/icarus/jakewray.ca' is dirty
+Environment prepared for jakewray.dev development
+[1/3] STEP 1/8: FROM docker.io/library/rust:bookworm AS deps
+[1/3] STEP 1/8: FROM docker.io/library/rust:bookworm AS deps
+Trying to pull docker.io/library/rust:bookworm...
+Trying to pull docker.io/library/rust:bookworm...
+Getting image source signatures
+Getting image source signatures
+Copying blob sha256:f138b01f909eb710bafd1025dc956dc8bff39d450ee8d850660604bf5a07bfc7
+Copying blob sha256:f138b01f909eb710bafd1025dc956dc8bff39d450ee8d850660604bf5a07bfc7
+Copying blob sha256:c1be109a62df95316ceac87ea501079f32e17f36b636865a860841b7db06100c
+Copying blob sha256:fd1872fa12cc6b1145803f1a0679ca26cc65fa1b4e0ee389bfb30267594736b6
+Copying blob sha256:4925cf9d8be888d2b942e0479d921815942727632813c006bad6a067e6363663
+Copying blob sha256:64538a062a61add8dc8b290fa69475e8902eb839c497a5f5dcd5a950422e493c
+Copying blob sha256:c1be109a62df95316ceac87ea501079f32e17f36b636865a860841b7db06100c
+Copying blob sha256:fd1872fa12cc6b1145803f1a0679ca26cc65fa1b4e0ee389bfb30267594736b6
+Copying blob sha256:64538a062a61add8dc8b290fa69475e8902eb839c497a5f5dcd5a950422e493c
+Copying blob sha256:4925cf9d8be888d2b942e0479d921815942727632813c006bad6a067e6363663
+Traceback (most recent call last):
+  File "/nix/store/qzc04a3npl70cyyy6flnnrb2ig3kayxm-python3-3.13.11/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/nix/store/qzc04a3npl70cyyy6flnnrb2ig3kayxm-python3-3.13.11/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/nix/store/l4svg7s9n7f3zzlfc05bv10bc67lrb07-podman-compose-1.5.0/lib/python3.13/site-packages/podman_compose.py", line 4252, in async_main
+    await podman_compose.run()
+  File "/nix/store/l4svg7s9n7f3zzlfc05bv10bc67lrb07-podman-compose-1.5.0/lib/python3.13/site-packages/podman_compose.py", line 2072, in run
+    retcode = await cmd(self, args)
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/l4svg7s9n7f3zzlfc05bv10bc67lrb07-podman-compose-1.5.0/lib/python3.13/site-packages/podman_compose.py", line 3111, in compose_up
+    build_exit_code = await compose.commands["build"](compose, build_args)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/l4svg7s9n7f3zzlfc05bv10bc67lrb07-podman-compose-1.5.0/lib/python3.13/site-packages/podman_compose.py", line 2986, in compose_build
+    s = await t
+        ^^^^^^^
+  File "/nix/store/qzc04a3npl70cyyy6flnnrb2ig3kayxm-python3-3.13.11/lib/python3.13/asyncio/tasks.py", line 630, in _wait_for_one
+    f = await self._done.get()
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/qzc04a3npl70cyyy6flnnrb2ig3kayxm-python3-3.13.11/lib/python3.13/asyncio/queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/nix/store/l4svg7s9n7f3zzlfc05bv10bc67lrb07-podman-compose-1.5.0/bin/.podman-compose-wrapped", line 9, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/nix/store/l4svg7s9n7f3zzlfc05bv10bc67lrb07-podman-compose-1.5.0/lib/python3.13/site-packages/podman_compose.py", line 4256, in main
+    asyncio.run(async_main())
+    ~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/nix/store/qzc04a3npl70cyyy6flnnrb2ig3kayxm-python3-3.13.11/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/nix/store/qzc04a3npl70cyyy6flnnrb2ig3kayxm-python3-3.13.11/lib/python3.13/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt

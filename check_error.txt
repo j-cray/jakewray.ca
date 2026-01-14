@@ -1,0 +1,132 @@
+warning: Git tree '/home/icarus/jakewray.ca' is dirty
+Environment prepared for jakewray.dev development
+    Checking getrandom v0.2.17
+   Compiling wasm-bindgen-shared v0.2.100
+   Compiling wasm-bindgen v0.2.100
+    Checking rand_core v0.6.4
+    Checking ring v0.17.14
+    Checking crypto-common v0.1.7
+    Checking rand_chacha v0.3.1
+   Compiling wasm-bindgen-backend v0.2.100
+    Checking digest v0.10.7
+    Checking cipher v0.4.4
+    Checking universal-hash v0.5.1
+    Checking aead v0.5.2
+    Checking polyval v0.6.2
+    Checking rand v0.8.5
+    Checking hmac v0.12.1
+    Checking sha2 v0.10.9
+    Checking md-5 v0.10.6
+    Checking ghash v0.5.1
+    Checking ctr v0.9.2
+    Checking aes v0.8.4
+    Checking blowfish v0.9.1
+    Checking hkdf v0.12.4
+    Checking bcrypt v0.15.1
+    Checking aes-gcm v0.10.3
+    Checking cookie v0.18.1
+    Checking rustls-webpki v0.103.8
+   Compiling wasm-bindgen-macro-support v0.2.100
+    Checking axum-extra v0.9.6
+    Checking rustls v0.23.36
+   Compiling wasm-bindgen-macro v0.2.100
+    Checking js-sys v0.3.77
+    Checking console_error_panic_hook v0.1.7
+    Checking sqlx-core v0.8.6
+    Checking wasm-bindgen-futures v0.4.50
+    Checking web-sys v0.3.77
+    Checking hydration_context v0.2.1
+    Checking any_spawner v0.2.0
+    Checking reactive_graph v0.1.8
+    Checking sqlx-postgres v0.8.6
+    Checking reactive_stores v0.1.8
+    Checking sqlx v0.8.6
+    Checking migration_tool v0.1.0 (/home/icarus/jakewray.ca/migration)
+    Checking gloo-utils v0.2.0
+    Checking tachys v0.1.9
+    Checking wasm-streams v0.4.2
+    Checking gloo-net v0.6.0
+    Checking server_fn v0.7.8
+    Checking leptos_dom v0.7.8
+    Checking leptos_server v0.7.8
+    Checking leptos v0.7.8
+    Checking leptos_meta v0.7.8
+    Checking leptos_router v0.7.8
+    Checking leptos_integration_utils v0.7.8
+    Checking leptos_axum v0.7.8
+    Checking frontend v0.1.0 (/home/icarus/jakewray.ca/frontend)
+error[E0425]: cannot find value `Scripts` in this scope
+  --> frontend/src/app.rs:73:18
+   |
+73 |                 <Scripts/>
+   |                  ^^^^^^^ help: a function with a similar name exists: `Script`
+   |
+  ::: /home/icarus/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/leptos_meta-0.7.8/src/script.rs:26:1
+   |
+26 | #[component]
+   | ------------ similarly named function `Script` defined here
+
+warning: unused import: `icondata::BsList`
+ --> frontend/src/components/navbar.rs:1:5
+  |
+1 | use icondata::BsList;
+  |     ^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `leptos::logging`
+ --> frontend/src/pages/admin/login.rs:1:5
+  |
+1 | use leptos::logging;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused import: `leptos::*`
+ --> frontend/src/pages/admin/dashboard.rs:2:5
+  |
+2 | use leptos::*;
+  |     ^^^^^^^^^
+
+warning: unused import: `Cookie`
+  --> frontend/src/pages/admin/mod.rs:19:43
+   |
+19 |         use axum_extra::extract::cookie::{Cookie, SignedCookieJar};
+   |                                           ^^^^^^
+
+warning: unused import: `leptos::prelude::*`
+ --> frontend/src/lib.rs:5:5
+  |
+5 | use leptos::prelude::*;
+  |     ^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated function `leptos::prelude::create_signal`: This function is being renamed to `signal()` to conform to Rust idioms.
+ --> frontend/src/components/navbar.rs:9:45
+  |
+9 |     let (is_drawer_open, set_drawer_open) = create_signal(false);
+  |                                             ^^^^^^^^^^^^^
+  |
+  = note: `#[warn(deprecated)]` on by default
+
+error[E0282]: type annotations needed
+  --> frontend/src/app.rs:63:5
+   |
+63 | /     view! {
+64 | |         <!DOCTYPE html>
+65 | |         <html lang="en">
+66 | |             <head>
+...  |
+75 | |         </html>
+76 | |     }
+   | |_____^ cannot infer type
+   |
+   = note: this error originates in the macro `view` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unused import: `leptos_router`
+  --> frontend/src/app.rs:15:5
+   |
+15 | use leptos_router::*;
+   |     ^^^^^^^^^^^^^
+
+Some errors have detailed explanations: E0282, E0425.
+For more information about an error, try `rustc --explain E0282`.
+warning: `frontend` (lib) generated 7 warnings
+error: could not compile `frontend` (lib) due to 2 previous errors; 7 warnings emitted

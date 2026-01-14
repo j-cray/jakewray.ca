@@ -37,13 +37,13 @@ panic = "abort"
 [[workspace.metadata.leptos]]
 # The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
 name = "jakewray_ca"
-output-name = "jakewray_ca"
+output-name = "jakewray_ca_v2"
 # The site root folder is where cargo-leptos generate all output. WARNING: This is relative to the workspace root
 site-root = "target/site"
 # The site-root relative folder where all compiled output (JS, WASM, CSS) is written
 site-pkg-dir = "pkg"
 # Enable file hashing to bust cache
-hash-file = true
+hash-file = false
 # Tailwind Input File
 tailwind-input-file = "style/input.css"
 # Force usage of npm-installed tailwindcss

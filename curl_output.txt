@@ -1,0 +1,30 @@
+HTTP/1.1 200 OK
+content-type: application/wasm
+accept-ranges: bytes
+last-modified: Wed, 14 Jan 2026 04:49:43 GMT
+content-length: 671099
+date: Wed, 14 Jan 2026 04:56:21 GMT
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0   0     0   0     0     0     0  --:--:-- --:--:-- --:--:--     0* Host app-portfolio-1:3000 was resolved.
+* IPv6: (none)
+* IPv4: 172.19.0.3
+*   Trying 172.19.0.3:3000...
+* Established connection to app-portfolio-1 (172.19.0.3 port 3000) from 172.19.0.5 port 38182 
+* using HTTP/1.x
+> HEAD /pkg/jakewray_ca.wasm HTTP/1.1
+> Host: app-portfolio-1:3000
+> User-Agent: curl/8.17.0
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 200 OK
+< content-type: application/wasm
+< accept-ranges: bytes
+< last-modified: Wed, 14 Jan 2026 04:49:43 GMT
+< content-length: 671099
+< date: Wed, 14 Jan 2026 04:56:21 GMT
+< 
+  0 671099   0     0   0     0     0     0  --:--:-- --:--:-- --:--:--     0
+* Connection #0 to host app-portfolio-1:3000 left intact

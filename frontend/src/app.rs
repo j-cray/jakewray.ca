@@ -17,7 +17,7 @@ use leptos_router::*;
 #[component]
 pub fn App() -> impl IntoView {
     view! {
-        <Stylesheet id="leptos" href="/pkg/jakewray_ca.css"/>
+        <Stylesheet id="leptos" href="/pkg/jakewray_ca_v2.css"/>
         <Title text="Jake Wray"/>
         <Meta name="description" content="Journalist, Programmer, Photographer."/>
         <Meta charset="utf-8"/>
@@ -67,13 +67,10 @@ pub fn Shell() -> impl IntoView {
                 <AutoReload options=options.clone() />
                 <HydrationScripts options=options.clone() />
                 <MetaTags/>
-                <script>
-                    "console.log('Shell Loaded - JS Active');"
-                    "document.body.style.border = '5px solid green';"
-                </script>
             </head>
             <body class="bg-gray-900 text-white">
                 <App/>
+                // <Scripts/> replaced by HydrationScripts?
             </body>
         </html>
     }
@@ -91,24 +88,11 @@ fn MediaLibraryPlaceholder() -> impl IntoView {
 
 #[component]
 fn HomePage() -> impl IntoView {
-    // Debug: Change title color on mount to verify hydration
-    let (title_color, set_title_color) = signal("text-gradient");
-
-    Effect::new(move |_| {
-        set_timeout(
-            move || {
-                leptos::logging::log!("Refactor hydration check: changing title color");
-                set_title_color.set("text-red-500");
-            },
-            std::time::Duration::from_secs(1),
-        );
-    });
-
     view! {
             <div class="p-8 max-w-[1400px] mx-auto flex flex-col gap-16">
                 <header class="text-center py-16">
                     <h1 class="mb-2 text-6xl font-extrabold tracking-tighter">
-                        <span class={move || format!("{} font-bold tracking-tight", title_color.get())}>"JAKE WRAY"</span>
+                        <span class="text-gradient font-bold tracking-tight">"JAKE WRAY"</span>
                     </h1>
                     <p class="text-2xl text-gray-400 max-w-[600px] mx-auto">
                         "Journalist. Developer. Photographer. Creating extensive archives of the present."

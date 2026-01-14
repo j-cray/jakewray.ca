@@ -18,6 +18,7 @@ gcloud compute scp --recurse \
     ./docker-compose.prod.yml \
     ./migrations \
     ./Cargo.toml \
+    ./Cargo.lock \
     ./backend \
     ./frontend \
     ./shared \

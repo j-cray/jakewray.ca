@@ -82,26 +82,36 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
              },
              Shell
         );
-        handler(req).await.into_response()
+        let res: AxumResponse = handler(req).await.into_response();
+        res
     };
 
     let options_clone_2 = leptos_options.clone();
+    let pool_clone_2 = pool.clone();
+    let key_clone_2 = key.clone();
     let server_fn_handler = move |req: axum::extract::Request| async move {
-        // Manually inject state
-        leptos_axum::handle_server_fns(
+        let res: AxumResponse = leptos_axum::handle_server_fns_with_context(
+            move || {
+                provide_context(options_clone_2.clone());
+                provide_context(pool_clone_2.clone());
+                provide_context(key_clone_2.clone());
+            },
             req
-        ).await.into_response()
+        ).await.into_response();
+        res
     };
 
     let options_clone_3 = leptos_options.clone();
     let pool_clone_3 = pool.clone();
     let key_clone_3 = key.clone();
     let fallback_handler = move |uri: axum::http::Uri, req: axum::extract::Request| async move {
-        file_and_error_handler(uri, options_clone_3.clone(), pool_clone_3, key_clone_3, req).await.into_response()
+        let res: AxumResponse = file_and_error_handler(uri, options_clone_3.clone(), pool_clone_3, key_clone_3, req).await.into_response();
+        res
     };
 
+    let api_router = api::router(app_state.clone());
     let app = Router::new()
-        .nest("/api", api::router(app_state.clone()))
+        .nest("/api", api_router)
         .route("/ping", get(|| async { "pong" }))
         .route("/api/*fn_name", post(server_fn_handler))
         .fallback(fallback_handler)
@@ -135,9 +145,11 @@ async fn file_and_error_handler(
             },
             Shell
         );
-        handler(req).await.into_response()
+        let res: AxumResponse = handler(req).await.into_response();
+        res
     }
 }
+
 
 async fn get_static_file(uri: axum::http::Uri, root: &str) -> AxumResponse {
     let req = axum::extract::Request::builder()

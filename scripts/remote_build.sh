@@ -24,23 +24,23 @@ if [ "$TARGET" = "all" ] || [ "$TARGET" = "backend" ]; then
     sudo docker build --target deps -t portfolio-deps .
 
     echo "Ensuring DB is up for preparation..."
-    sudo docker compose -f docker-compose.prod.yml up -d db
+    sudo docker-compose -f docker-compose.prod.yml up -d db
     echo "Waiting for DB..."
 
 fi
 
 if [ "$TARGET" = "all" ]; then
     echo "Building and starting ALL services..."
-    sudo docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
+    sudo docker-compose -f docker-compose.prod.yml up -d --build --remove-orphans
 elif [ "$TARGET" = "backend" ]; then
     echo "Building and restarting BACKEND (portfolio) service..."
-    sudo docker compose -f docker-compose.prod.yml up -d --build --no-deps portfolio
+    sudo docker-compose -f docker-compose.prod.yml up -d --build --no-deps portfolio
     # We probably want to restart proxy too in case it lost connection?
     # Usually strictly not needed, but good practice if backend container IP changes.
     # But Nginx Proxy Manager usually handles it dynamic DNS.
 elif [ "$TARGET" = "frontend" ]; then
     echo "Rebuilding Frontend (as part of Backend/SSR)..."
-    sudo docker compose -f docker-compose.prod.yml up -d --build --no-deps portfolio
+    sudo docker-compose -f docker-compose.prod.yml up -d --build --no-deps portfolio
 else
     echo "Unknown target: $TARGET"
     exit 1

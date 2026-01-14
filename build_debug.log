@@ -1,0 +1,7 @@
+warning: Git tree '/home/icarus/jakewray.ca' is dirty
+Environment prepared for jakewray.dev development
+[1/3] STEP 1/8: FROM docker.io/library/rust:bookworm AS deps
+Error: creating build container: no policy.json file found at any of the following: "/home/icarus/.config/containers/policy.json", "/etc/containers/policy.json"
+[1/3] STEP 1/8: FROM docker.io/library/rust:bookworm AS deps
+Error: creating build container: no policy.json file found at any of the following: "/home/icarus/.config/containers/policy.json", "/etc/containers/policy.json"
+ERROR:podman_compose:Build command failed

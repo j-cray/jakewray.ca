@@ -1,4 +1,4 @@
-FROM rust:bookworm as deps
+FROM docker.io/library/rust:bookworm as deps
 # Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     nodejs \
@@ -27,7 +27,7 @@ RUN rustup target add wasm32-unknown-unknown
 FROM deps as builder
 WORKDIR /app
 COPY . .
-RUN rm Cargo.lock
+RUN rm -f Cargo.lock
 
 # Install node dependencies (for Tailwind v4)
 RUN npm install
@@ -42,7 +42,7 @@ RUN cargo leptos build --release -vv
 RUN cargo build --release --bin create_admin
 
 # Runtime Stage
-FROM debian:bookworm-slim as runtime
+FROM docker.io/library/debian:bookworm-slim as runtime
 WORKDIR /app
 
 # Install runtime dependencies (OpenSSL, ca-certificates)
