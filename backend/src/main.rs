@@ -100,7 +100,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     let app = Router::new()
-        .merge(api::router(app_state.clone()))
+        .nest("/api", api::router(app_state.clone()))
         .route("/ping", get(|| async { "pong" }))
         .route("/api/*fn_name", post(server_fn_handler))
         .fallback(fallback_handler);
