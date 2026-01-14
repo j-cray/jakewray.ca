@@ -41,9 +41,8 @@ output-name = "jakewray_ca"
 # The site root folder is where cargo-leptos generate all output. WARNING: This is relative to the workspace root
 site-root = "target/site"
 # The site-root relative folder where all compiled output (JS, WASM, CSS) is written
+# The site-root relative folder where all compiled output (JS, WASM, CSS) is written
 site-pkg-dir = "pkg"
-# The source style file. If it ends with .sass or .scss then it will be compiled by dart-sass into CSS. The CSS file will then be used by your app.
-style-file = "style/main.scss"
 # Tailwind Input File
 tailwind-input-file = "style/input.css"
 # Force usage of npm-installed tailwindcss
