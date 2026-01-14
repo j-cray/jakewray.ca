@@ -2,6 +2,7 @@ mod app;
 pub mod components;
 pub mod pages;
 pub use app::*;
+use leptos::prelude::*;
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]

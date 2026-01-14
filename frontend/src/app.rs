@@ -53,8 +53,10 @@ pub fn App() -> impl IntoView {
     }
 }
 
+#[cfg(feature = "ssr")]
 #[component]
 pub fn Shell() -> impl IntoView {
+    use leptos::prelude::LeptosOptions;
     let options = use_context::<LeptosOptions>().expect("LeptosOptions missing in Shell");
     provide_meta_context();
 
