@@ -56,18 +56,15 @@ pub fn App() -> impl IntoView {
                         <Footer/>
                     </div>
                 </Router>
-                // {
-                //     #[cfg(feature = "ssr")]
-                //     {
-                //         use leptos::prelude::LeptosOptions;
-                //         if let Some(options) = use_context::<LeptosOptions>() {
-                //             view! { <HydrationScripts options/> }
-                //         } else {
-                //             // If options are missing (e.g. during route discovery), render nothing
-                //             view! { <></> }
-                //         }
-                //     }
-                // }
+                {
+                    #[cfg(feature = "ssr")]
+                    {
+                        use leptos::prelude::LeptosOptions;
+                        use_context::<LeptosOptions>().map(|options| {
+                            view! { <HydrationScripts options/> }
+                        })
+                    }
+                }
             </body>
         </html>
     }
