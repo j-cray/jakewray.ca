@@ -55,13 +55,13 @@ RUN apt-get update -y \
 COPY --from=builder /usr/local/cargo/bin/sqlx /usr/local/bin/sqlx
 COPY --from=builder /app/target/release/backend /app/backend
 COPY --from=builder /app/target/release/create_admin /app/create_admin
-COPY --from=builder /app/target/site /app/site
+COPY --from=builder /app/target/site /app/target/site
 COPY --from=builder /app/Cargo.toml /app/Cargo.toml
 COPY --from=builder /app/Cargo.lock /app/Cargo.lock
 
 # Set environment
 ENV LEPTOS_SITE_ADDR="0.0.0.0:3000"
-ENV LEPTOS_SITE_ROOT="site"
+ENV LEPTOS_SITE_ROOT="target/site"
 
 EXPOSE 3000
 
