@@ -9,7 +9,7 @@ use sqlx::postgres::PgPoolOptions;
 use std::net::SocketAddr;
 use dotenvy::dotenv;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-use frontend::App;
+use frontend::{App, Shell};
 
 mod api;
 mod state;
@@ -21,6 +21,7 @@ use tower::ServiceExt;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
+    // ... tracing setup ...
     tracing_subscriber::registry()
         .with(tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "debug".into()))
         .with(tracing_subscriber::fmt::layer())
@@ -79,7 +80,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                  provide_context(pool_clone.clone());
                  provide_context(key_clone.clone());
              },
-             App
+             Shell
         );
         handler(req).await.into_response()
     };
@@ -132,7 +133,7 @@ async fn file_and_error_handler(
                 provide_context(pool_clone.clone());
                 provide_context(key_clone.clone());
             },
-            App
+            Shell
         );
         handler(req).await.into_response()
     }

@@ -16,55 +16,58 @@ use leptos_router::*;
 
 #[component]
 pub fn App() -> impl IntoView {
+    view! {
+        <Stylesheet id="leptos" href="/pkg/jakewray_ca.css"/>
+        <Title text="Jake Wray"/>
+        <Meta name="description" content="Journalist, Programmer, Photographer."/>
+        <Meta charset="utf-8"/>
+        <Meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+        <Router>
+            <div class="min-h-screen flex flex-col">
+                <Navbar/>
+                <main class="flex-grow container mx-auto px-4 py-8">
+                    <Routes fallback=|| view! { <NotFound/> }>
+                            <Route path=leptos_router::path!("/") view=|| view! { <HomePage/> }/>
+                            <Route path=leptos_router::path!("/about") view=|| view! { <AboutPage/> }/>
+                            <Route path=leptos_router::path!("/contact") view=|| view! { <ContactPage/> }/>
+                            <Route path=leptos_router::path!("/setup") view=|| view! { <crate::pages::setup::SetupPage/> }/>
+                            <Route path=leptos_router::path!("/admin") view=|| view! { <AdminLoginPage/> }/>
+                            <ParentRoute path=leptos_router::path!("/admin") view=|| view! { <crate::pages::admin::AdminProtectedLayout/> }>
+                            <Route path=leptos_router::path!("dashboard") view=|| view! { <AdminDashboard/> }/>
+                            <Route path=leptos_router::path!("composer") view=|| view! { <AdminComposer/> }/>
+                            <Route path=leptos_router::path!("sync") view=|| view! { <AdminSyncManager/> }/>
+                            <Route path=leptos_router::path!("media") view=|| view! { <MediaLibraryPlaceholder/> }/>
+                            </ParentRoute>
+                            <Route path=leptos_router::path!("/journalism") view=|| view! { <JournalismPage/> }/>
+                            <Route path=leptos_router::path!("/personal") view=|| view! { <PersonalPage/> }/>
+                            <Route path=leptos_router::path!("/creative-writing") view=|| view! { <CreativeWritingPage/> }/>
+                            <Route path=leptos_router::path!("/music") view=|| view! { <MusicPage/> }/>
+                            <Route path=leptos_router::path!("/visual-art") view=|| view! { <VisualArtPage/> }/>
+                            <Route path=leptos_router::path!("/programming") view=|| view! { <ProgrammingPage/> }/>
+                    </Routes>
+                </main>
+                <Footer/>
+            </div>
+        </Router>
+    }
+}
+
+#[component]
+pub fn Shell() -> impl IntoView {
+    let options = use_context::<LeptosOptions>().expect("LeptosOptions missing in Shell");
     provide_meta_context();
 
     view! {
         <!DOCTYPE html>
         <html lang="en">
             <head>
-                <Title text="Jake Wray"/>
-                <Meta name="description" content="Journalist, Programmer, Photographer."/>
-                <Meta charset="utf-8"/>
-                <Meta name="viewport" content="width=device-width, initial-scale=1"/>
-                <Stylesheet id="leptos" href="/pkg/jakewray_ca.css"/>
+                <AutoReload options=options.clone() />
+                <HydrationScripts options=options.clone() />
+                <MetaTags/>
             </head>
             <body class="bg-gray-900 text-white">
-                <Router>
-                    <div class="min-h-screen flex flex-col">
-                        <Navbar/>
-                        <main class="flex-grow container mx-auto px-4 py-8">
-                            <Routes fallback=|| view! { <NotFound/> }>
-                                    <Route path=leptos_router::path!("/") view=|| view! { <HomePage/> }/>
-                                    <Route path=leptos_router::path!("/about") view=|| view! { <AboutPage/> }/>
-                                    <Route path=leptos_router::path!("/contact") view=|| view! { <ContactPage/> }/>
-                                    <Route path=leptos_router::path!("/setup") view=|| view! { <crate::pages::setup::SetupPage/> }/>
-                                    <Route path=leptos_router::path!("/admin") view=|| view! { <AdminLoginPage/> }/>
-                                    <ParentRoute path=leptos_router::path!("/admin") view=|| view! { <crate::pages::admin::AdminProtectedLayout/> }>
-                                    <Route path=leptos_router::path!("dashboard") view=|| view! { <AdminDashboard/> }/>
-                                    <Route path=leptos_router::path!("composer") view=|| view! { <AdminComposer/> }/>
-                                    <Route path=leptos_router::path!("sync") view=|| view! { <AdminSyncManager/> }/>
-                                    <Route path=leptos_router::path!("media") view=|| view! { <MediaLibraryPlaceholder/> }/>
-                                    </ParentRoute>
-                                    <Route path=leptos_router::path!("/journalism") view=|| view! { <JournalismPage/> }/>
-                                    <Route path=leptos_router::path!("/personal") view=|| view! { <PersonalPage/> }/>
-                                    <Route path=leptos_router::path!("/creative-writing") view=|| view! { <CreativeWritingPage/> }/>
-                                    <Route path=leptos_router::path!("/music") view=|| view! { <MusicPage/> }/>
-                                    <Route path=leptos_router::path!("/visual-art") view=|| view! { <VisualArtPage/> }/>
-                                    <Route path=leptos_router::path!("/programming") view=|| view! { <ProgrammingPage/> }/>
-                            </Routes>
-                        </main>
-                        <Footer/>
-                    </div>
-                </Router>
-                {
-                    #[cfg(feature = "ssr")]
-                    {
-                        use leptos::prelude::LeptosOptions;
-                        use_context::<LeptosOptions>().map(|options| {
-                            view! { <HydrationScripts options/> }
-                        })
-                    }
-                }
+                <App/>
             </body>
         </html>
     }
