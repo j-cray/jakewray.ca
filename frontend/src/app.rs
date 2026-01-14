@@ -60,8 +60,12 @@ pub fn App() -> impl IntoView {
                     #[cfg(feature = "ssr")]
                     {
                         use leptos::prelude::LeptosOptions;
-                        let options = use_context::<LeptosOptions>().expect("LeptosOptions missing");
-                        view! { <HydrationScripts options/> }
+                        if let Some(options) = use_context::<LeptosOptions>() {
+                            view! { <HydrationScripts options/> }
+                        } else {
+                            // If options are missing (e.g. during route discovery), render nothing
+                            view! { <></> }
+                        }
                     }
                 }
             </body>
