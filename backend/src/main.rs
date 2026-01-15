@@ -1,6 +1,6 @@
 use axum::{
-    routing::{get, post},
     Router,
+    extract::State,
 };
 use leptos::prelude::*;
 use leptos::context::provide_context;
@@ -26,19 +26,39 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    // Improved error handling for DATABASE_URL
+    let database_url = std::env::var("DATABASE_URL")
+        .map_err(|_| "DATABASE_URL environment variable must be set")?;
+    
     let pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&database_url)
         .await
-        .expect("Failed to create pool");
+        .map_err(|e| format!("Failed to create database pool: {}", e))?;
 
+    // Run migrations
     sqlx::migrate!("../migrations")
         .run(&pool)
-        .await?;
+        .await
+        .map_err(|e| {
+            tracing::error!("Failed to run migrations: {}", e);
+            e
+        })?;
 
-    let conf = get_configuration(None).unwrap();
-    let leptos_options = conf.leptos_options;
+    // Build LeptosOptions from environment/config
+    let site_addr: SocketAddr = std::env::var("LEPTOS_SITE_ADDR")
+        .unwrap_or_else(|_| "0.0.0.0:3000".to_string())
+        .parse()
+        .map_err(|e| format!("Invalid LEPTOS_SITE_ADDR: {}", e))?;
+    
+    let leptos_options = LeptosOptions::builder()
+        .output_name("jakewray_ca")
+        .site_pkg_dir("pkg")
+        .site_root("target/site")
+        .site_addr(site_addr)
+        .reload_port(3001)
+        .build();
+    
     let addr = leptos_options.site_addr;
     let routes = generate_route_list(App);
 
@@ -47,36 +67,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         pool: pool.clone(),
     };
 
-    let options_clone = leptos_options.clone();
-    let leptos_handler = move |req: axum::extract::Request| async move {
-        let handler = leptos_axum::render_app_to_stream_with_context(
-             move || {
-                 provide_context(options_clone.clone());
-             },
-             App
-        );
-        handler(req).await.into_response()
-    };
-
-    let options_clone_2 = leptos_options.clone();
-    let server_fn_handler = move |req: axum::extract::Request| async move {
-        // Manually inject state
-        leptos_axum::handle_server_fns(
-            req
-        ).await.into_response()
-    };
-
-    let options_clone_3 = leptos_options.clone();
-    let fallback_handler = move |uri: axum::http::Uri, req: axum::extract::Request| async move {
-        file_and_error_handler(uri, options_clone_3.clone(), req).await.into_response()
-    };
-
+    // Build the application router with all routes
     let app = Router::new()
-        .merge(api::router(app_state.clone()))
-        .route("/api/*fn_name", post(server_fn_handler))
-        .route("/*path", get(leptos_handler))
-        .fallback(fallback_handler);
-        // .with_state(app_state) REMOVED: Router remains Router<()>
+        .nest("/", api::router(app_state.clone()))
+        .leptos_routes_with_context(
+            &app_state,
+            routes,
+            {
+                let pool = app_state.pool.clone();
+                let options = app_state.leptos_options.clone();
+                move || {
+                    provide_context(pool.clone());
+                    provide_context(options.clone());
+                }
+            },
+            App
+        )
+        .fallback(file_and_error_handler)
+        .with_state(app_state);
 
     tracing::info!("listening on http://{}", &addr);
     let listener = tokio::net::TcpListener::bind(&addr).await?;
@@ -86,19 +94,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 async fn file_and_error_handler(
+    State(state): State<AppState>,
     uri: axum::http::Uri,
-    options: LeptosOptions, // Changed from State<LeptosOptions>
     req: axum::extract::Request
 ) -> AxumResponse {
-    let root = options.site_root.clone();
-    let res = get_static_file(uri.clone(), &root).await;
+    let root = state.leptos_options.site_root.clone();
+    let res = get_static_file(uri, &root).await;
 
     if res.status() == axum::http::StatusCode::OK {
         res.into_response()
     } else {
         let handler = leptos_axum::render_app_to_stream_with_context(
             move || {
-                provide_context(options.clone());
+                provide_context(state.leptos_options.clone());
+                provide_context(state.pool.clone());
             },
             App
         );
@@ -108,17 +117,21 @@ async fn file_and_error_handler(
 
 async fn get_static_file(uri: axum::http::Uri, root: &str) -> AxumResponse {
     let req = axum::extract::Request::builder()
-        .uri(uri.clone())
+        .uri(uri)
         .body(axum::body::Body::empty())
-        .unwrap();
+        .expect("Failed to build request for static file");
+    
     // `ServeDir` implements `Service`
     match tower_http::services::ServeDir::new(root).oneshot(req).await {
         Ok(res) => res.into_response(),
-        Err(err) => (
-            axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-            format!("Something went wrong: {}", err),
-        )
-            .into_response(),
+        Err(err) => {
+            tracing::error!("Error serving static file: {}", err);
+            (
+                axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Something went wrong: {}", err),
+            )
+                .into_response()
+        }
     }
 }
 
