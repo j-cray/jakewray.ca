@@ -23,6 +23,7 @@ gcloud compute scp --recurse \
     ./style \
     ./assets \
     ./scripts \
+    ./Cargo.lock \
     jake-user@$INSTANCE_NAME:~/app \
     --project=$PROJECT_ID \
     --zone=$ZONE
