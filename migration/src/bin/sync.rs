@@ -4,6 +4,7 @@ use sqlx::postgres::PgPoolOptions;
 use std::env;
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct WpPost {
     id: i64,
     date_gmt: String,
