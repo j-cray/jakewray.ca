@@ -1,11 +1,9 @@
 use axum::{
     routing::{get, post},
-    Router, Json,
+    Router,
 };
-use sqlx::PgPool;
 
-pub fn router(state: crate::state::AppState) -> Router
-{
+pub fn router(state: crate::state::AppState) -> Router<crate::state::AppState> {
     Router::new()
         .route("/login", post(login))
         .route("/me", get(me))

@@ -1,5 +1,4 @@
 use leptos::prelude::*;
-use leptos::*;
 
 #[component]
 pub fn AdminSyncManager() -> impl IntoView {
@@ -10,8 +9,6 @@ pub fn AdminSyncManager() -> impl IntoView {
         set_sync_status.set("Syncing...".to_string());
         // Server Action TODO
 
-        let set_sync_status = set_sync_status.clone();
-        let set_last_sync = set_last_sync.clone();
         // Mock completion
         set_timeout(
             move || {
