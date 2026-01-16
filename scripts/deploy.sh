@@ -9,15 +9,17 @@ ZONE="us-west1-a"
 echo "Deploying target: $TARGET"
 
 
-# 0. Fix permissions (in case Docker created root-owned files)
-echo "Fixing remote permissions..."
-gcloud compute ssh jake-user@$INSTANCE_NAME --project=$PROJECT_ID --zone=$ZONE --command="sudo chown -R jake-user:jake-user ~/app"
+
+# 0. Clean remote directory and free space
+echo "Cleaning remote directory and Docker artifacts..."
+gcloud compute ssh jake-user@$INSTANCE_NAME --project=$PROJECT_ID --zone=$ZONE --command="sudo docker system prune -af && sudo rm -rf ~/app && mkdir -p ~/app"
+
 
 # 1. Copy files to VM
 echo "Copying project files..."
 gcloud compute scp --recurse \
     ./Dockerfile \
-    ./nginx.conf \
+    ./nginx \
     ./docker-compose.prod.yml \
     ./migrations \
     ./Cargo.toml \
