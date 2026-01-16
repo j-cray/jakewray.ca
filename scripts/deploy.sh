@@ -12,7 +12,7 @@ echo "Deploying target: $TARGET"
 
 # 0. Clean remote directory and free space
 echo "Cleaning remote directory and Docker artifacts..."
-gcloud compute ssh jake-user@$INSTANCE_NAME --project=$PROJECT_ID --zone=$ZONE --command="sudo docker system prune -af && sudo rm -rf ~/app && mkdir -p ~/app"
+gcloud compute ssh jake-user@$INSTANCE_NAME --project=$PROJECT_ID --zone=$ZONE --command="sudo docker system prune --all --force && sudo rm -rf ~/app && mkdir -p ~/app"
 
 
 # 1. Copy files to VM
