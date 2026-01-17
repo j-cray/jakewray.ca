@@ -1,6 +1,6 @@
 #!/bin/bash
 
-domains=(jakewray.dev)
+domains=(jakewray.dev www.jakewray.dev)
 rsa_key_size=4096
 data_path="./certbot"
 email="jake@bitnorth.ca" # Adding a valid email is important

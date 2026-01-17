@@ -29,9 +29,7 @@ if [ "$TARGET" = "all" ] || [ "$TARGET" = "backend" ]; then
     sleep 5 # Reduced from 15, usually 5 is enough if it was already running
 
     echo "Running sqlx prepare on server..."
-    # We mount current dir to /app so sqlx-data.json is written back to host
-    sudo docker run --rm \
-        --network app_jake_net \
+    sudo docker compose -f docker-compose.prod.yml run --rm \
         -v $(pwd):/app \
         -w /app \
         -e DATABASE_URL=postgres://admin:password@db:5432/portfolio \
