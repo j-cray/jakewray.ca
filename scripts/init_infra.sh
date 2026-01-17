@@ -37,9 +37,16 @@ if ! gcloud compute instances describe $INSTANCE_NAME --project=$PROJECT_ID --zo
         curl -fsSL https://get.docker.com -o get-docker.sh
         sh get-docker.sh
 
-        # Install Docker Compose
-        curl -L "https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        # Install Docker Compose (standalone)
+        COMPOSE_VERSION="v2.24.6"
+        OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+        ARCH=$(uname -m)
+        curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-${OS}-${ARCH}" -o /usr/local/bin/docker-compose
         chmod +x /usr/local/bin/docker-compose
+
+        # Install Docker Compose (plugin)
+        mkdir -p /usr/local/lib/docker/cli-plugins
+        ln -s /usr/local/bin/docker-compose /usr/local/lib/docker/cli-plugins/docker-compose
         '
 
     echo "Waiting for VM to initialize..."

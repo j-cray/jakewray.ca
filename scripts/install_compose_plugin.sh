@@ -1,28 +1,39 @@
 #!/bin/bash
 set -e
 
-# Configuration
-DOCKER_CONFIG_DIR="$HOME/.docker/cli-plugins"
-# Determine architecture
+# This script installs/fixes Docker Compose as both a standalone binary and a plugin.
+# It handles architecture detection and ensures lowercase names for URLs.
+
+COMPOSE_VERSION="v2.24.6"
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m)
+
+# Normalize architecture names
 if [ "$ARCH" = "x86_64" ]; then
-    BINARY_ARCH="linux-x86_64"
+    BINARY_ARCH="x86_64"
 elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
-    BINARY_ARCH="linux-aarch64"
+    BINARY_ARCH="aarch64"
 else
     echo "Unknown architecture: $ARCH"
     exit 1
 fi
 
-PLUGIN_URL="https://github.com/docker/compose/releases/download/v2.24.6/docker-compose-$BINARY_ARCH"
-PLUGIN_PATH="$DOCKER_CONFIG_DIR/docker-compose"
+BINARY_URL="https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-${OS}-${BINARY_ARCH}"
 
-echo "Installing Docker Compose Plugin for $ARCH..."
-echo "Downloading binary from $PLUGIN_URL..."
-curl -SL "$PLUGIN_URL" -o "$PLUGIN_PATH"
+echo "Installing Docker Compose ${COMPOSE_VERSION} for ${OS}-${BINARY_ARCH}..."
+echo "Downloading from ${BINARY_URL}..."
 
-# 3. Make executable
-chmod +x "$PLUGIN_PATH"
+# 1. Download to /usr/local/bin
+sudo curl -SL "${BINARY_URL}" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
 
-echo "Docker Compose Plugin installed successfully at $PLUGIN_PATH"
+# 2. Link as a CLI plugin in multiple standard paths
+sudo mkdir -p /usr/local/lib/docker/cli-plugins
+sudo ln -sf /usr/local/bin/docker-compose /usr/local/lib/docker/cli-plugins/docker-compose
+
+sudo mkdir -p /usr/lib/docker/cli-plugins
+sudo ln -sf /usr/local/bin/docker-compose /usr/lib/docker/cli-plugins/docker-compose
+
+echo "Docker Compose installed successfully!"
+docker-compose version
 docker compose version

@@ -2,6 +2,8 @@
 set -e
 
 echo "Running Remote Setup..."
+# Ensure Docker Compose is installed correctly
+./scripts/install_compose_plugin.sh
 
 # Install gcsfuse if not installed
 if ! command -v gcsfuse &> /dev/null; then
