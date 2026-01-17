@@ -18,18 +18,26 @@ use sqlx::Row;
 
 async fn list_articles(State(pool): State<PgPool>) -> Json<Vec<Article>> {
     match sqlx::query("SELECT id, wp_id, slug, title, subtitle, excerpt, content, cover_image_url, author, published_at, origin FROM articles ORDER BY published_at DESC LIMIT 20")
-        .map(|row: sqlx::postgres::PgRow| Article {
-            id: row.get("id"),
-            wp_id: row.get("wp_id"),
-            slug: row.get("slug"),
-            title: row.get("title"),
-            subtitle: row.get("subtitle"),
-            excerpt: row.get("excerpt"),
-            content: row.get("content"),
-            cover_image_url: row.get("cover_image_url"),
-            author: row.get("author"),
-            published_at: row.get("published_at"),
-            origin: row.get("origin"),
+        .map(|row: sqlx::postgres::PgRow| {
+            let origin_str: String = row.get("origin");
+            let origin = match origin_str.as_str() {
+                "imported" => shared::Origin::Imported,
+                "synced" => shared::Origin::Synced,
+                _ => shared::Origin::Local,
+            };
+            Article {
+                id: row.get("id"),
+                wp_id: row.get("wp_id"),
+                slug: row.get("slug"),
+                title: row.get("title"),
+                subtitle: row.get("subtitle"),
+                excerpt: row.get("excerpt"),
+                content: row.get("content"),
+                cover_image_url: row.get("cover_image_url"),
+                author: row.get("author"),
+                published_at: row.get("published_at"),
+                origin,
+            }
         })
         .fetch_all(&pool)
         .await

@@ -11,17 +11,7 @@ pub enum Origin {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Article {
-    pub id: Uuid,
-    pub wp_id: Option<i64>,
-    pub slug: String,
-    pub title: String,
-    pub subtitle: Option<String>,
-    pub excerpt: Option<String>,
-    pub content: String,
-    pub cover_image_url: Option<String>,
-    pub author: String,
-    pub published_at: DateTime<Utc>,
-    pub origin: String,
+    pub origin: Origin,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -32,6 +22,7 @@ pub struct BlogPost {
     pub content: String,
     pub published_at: DateTime<Utc>,
     pub tags: Option<Vec<String>>,
+    pub origin: Origin, // Added origin field
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

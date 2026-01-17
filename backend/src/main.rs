@@ -129,7 +129,11 @@ async fn get_static_file(uri: axum::http::Uri, root: &str) -> AxumResponse {
         .body(axum::body::Body::empty())
         .unwrap_or_else(|e| {
             tracing::error!("Failed to build request for static file {}: {}", uri_str, e);
-            panic!("Invalid request builder state");
+            // Return a dummy request that will likely fail gracefully in ServeDir
+            axum::extract::Request::builder()
+                .uri("/")
+                .body(axum::body::Body::empty())
+                .unwrap()
         });
 
     // `ServeDir` implements `Service`
