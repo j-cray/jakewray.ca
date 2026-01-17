@@ -37,7 +37,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .map_err(|e| format!("Failed to create database pool: {}", e))?;
 
     // Run migrations
-    sqlx::migrate!("../migrations")
+    sqlx::migrate!("../../migrations")
         .run(&pool)
         .await
         .map_err(|e| {
