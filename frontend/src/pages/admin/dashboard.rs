@@ -6,13 +6,14 @@ pub fn AdminDashboard() -> impl IntoView {
     let navigate = use_navigate();
     
     // Check if user is authenticated
+    let navigate_clone = navigate.clone();
     Effect::new(move || {
         let window = web_sys::window().unwrap();
         let local_storage = window.local_storage().unwrap().unwrap();
         let token = local_storage.get_item("admin_token").unwrap_or(None);
         
         if token.is_none() {
-            navigate("/admin/login", Default::default());
+            navigate_clone("/admin/login", Default::default());
         }
     });
 
