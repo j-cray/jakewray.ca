@@ -23,9 +23,9 @@ sudo docker compose -f docker-compose.prod.yml stop nginx 2>/dev/null || true
 
 # Get certificates using certbot standalone mode (since nginx isn't running yet)
 echo "Requesting Let's Encrypt certificates using standalone mode..."
-sudo docker compose -f docker-compose.prod.yml run --rm -p 80:80 certbot certonly \
+mkdir -p ~/app/certbot/conf ~/app/certbot/www
+sudo docker run --rm -p 80:80 -v ~/app/certbot/conf:/etc/letsencrypt -v ~/app/certbot/www:/var/www/certbot certbot/certbot certonly \
     --standalone \
-    --staging \
     --preferred-challenges http \
     --email $EMAIL \
     --agree-tos \
