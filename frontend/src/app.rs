@@ -19,53 +19,45 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
-        <html lang="en">
-        <head>
-            <Meta charset="utf-8"/>
-            <Title text="Jake Wray"/>
-            <Meta name="description" content="Journalist, Programmer, Photographer."/>
-            <Meta name="viewport" content="width=device-width, initial-scale=1"/>
-            <Stylesheet id="leptos" href="/pkg/jakewray_ca.css"/>
-        </head>
-        <body>
-                <Router>
-                    <div class="min-h-screen flex flex-col bg-gray-50/50">
-                        <Navbar/>
-                        <main class="flex-grow p-4">
-                            <Routes fallback=|| view! { <NotFound/> }>
-                                // Public Routes
-                                <Route path=path!("/") view=HomePage/>
-                                <Route path=path!("/about") view=AboutPage/>
-                                <Route path=path!("/contact") view=ContactPage/>
+        <Html lang="en"/>
+        <Meta charset="utf-8"/>
+        <Title text="Jake Wray"/>
+        <Meta name="description" content="Journalist, Programmer, Photographer."/>
+        <Meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <Stylesheet id="leptos" href="/pkg/jakewray_ca.css"/>
 
-                                // Portfolio
-                                <Route path=path!("/journalism") view=JournalismPage/>
-                                <Route path=path!("/personal") view=PersonalPage/>
-                                <Route path=path!("/creative-writing") view=CreativeWritingPage/>
-                                <Route path=path!("/music") view=MusicPage/>
-                                <Route path=path!("/visual-art") view=VisualArtPage/>
-                                <Route path=path!("/programming") view=ProgrammingPage/>
+        <Router>
+            <div class="min-h-screen flex flex-col bg-gray-50/50">
+                <Navbar/>
+                <main class="flex-grow p-4">
+                    <Routes fallback=|| view! { <NotFound/> }>
+                        // Public Routes
+                        <Route path=path!("/") view=HomePage/>
+                        <Route path=path!("/about") view=AboutPage/>
+                        <Route path=path!("/contact") view=ContactPage/>
 
-                                // Admin Routes
-                                <Route path=path!("/admin") view=AdminRedirect/>
-                                <Route path=path!("/admin/dashboard") view=AdminDashboard/>
-                                <Route path=path!("/admin/login") view=AdminLoginPage/>
-                                <Route path=path!("/admin/compose") view=AdminComposer/>
-                                <Route path=path!("/admin/sync") view=AdminSyncManager/>
-                                <Route path=path!("/admin/media") view=MediaLibraryPlaceholder/>
-                            </Routes>
-                        </main>
-                        <Footer/>
-                    </div>
-                </Router>
-                <Script type_="module">
-                    {r#"
-                        import init from '/pkg/jakewray_ca.js';
-                        init({ module_or_path: '/pkg/jakewray_ca.wasm' });
-                    "#}
-                </Script>
-        </body>
-        </html>
+                        // Portfolio
+                        <Route path=path!("/journalism") view=JournalismPage/>
+                        <Route path=path!("/personal") view=PersonalPage/>
+                        <Route path=path!("/creative-writing") view=CreativeWritingPage/>
+                        <Route path=path!("/music") view=MusicPage/>
+                        <Route path=path!("/visual-art") view=VisualArtPage/>
+                        <Route path=path!("/programming") view=ProgrammingPage/>
+
+                        // Admin Routes
+                        <Route path=path!("/admin") view=AdminRedirect/>
+                        <Route path=path!("/admin/dashboard") view=AdminDashboard/>
+                        <Route path=path!("/admin/login") view=AdminLoginPage/>
+                        <Route path=path!("/admin/compose") view=AdminComposer/>
+                        <Route path=path!("/admin/sync") view=AdminSyncManager/>
+                        <Route path=path!("/admin/media") view=MediaLibraryPlaceholder/>
+                    </Routes>
+                </main>
+                <Footer/>
+            </div>
+        </Router>
+
+        <HydrationScripts/>
     }
 }
 

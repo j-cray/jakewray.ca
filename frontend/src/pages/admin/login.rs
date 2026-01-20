@@ -113,7 +113,7 @@ pub fn AdminLoginPage() -> impl IntoView {
                     })
                 }}
 
-                <form on:submit=on_submit class="flex flex-col gap-4">
+                <form autocomplete="on" on:submit=on_submit class="flex flex-col gap-4">
                     <div class="flex flex-col gap-2">
                         <label for="username" class="text-sm font-semibold text-gray-700">"Username"</label>
                         <input
@@ -121,6 +121,7 @@ pub fn AdminLoginPage() -> impl IntoView {
                             name="username"
                             type="text"
                             placeholder="Enter username"
+                            autocomplete="username"
                             class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                             on:input=move |ev| set_username.set(event_target_value(&ev))
                             disabled=move || loading.get()
@@ -134,6 +135,7 @@ pub fn AdminLoginPage() -> impl IntoView {
                             name="password"
                             type="password"
                             placeholder="Enter password"
+                            autocomplete="current-password"
                             class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                             on:input=move |ev| set_password.set(event_target_value(&ev))
                             disabled=move || loading.get()
