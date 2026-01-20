@@ -1,4 +1,6 @@
+# syntax=docker/dockerfile:1
 FROM rust:bookworm as deps
+
 # Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     nodejs \
@@ -10,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install cargo-binstall for faster tool installation
 RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
 
-# Install cargo-leptos and sass
+# Install cargo-leptos and sass (cached layer)
 RUN cargo binstall cargo-leptos -y
 RUN npm install -g sass
 
@@ -20,18 +22,53 @@ RUN cargo binstall sqlx-cli -y --force
 # Add WASM target
 RUN rustup target add wasm32-unknown-unknown
 
+FROM deps as planner
+WORKDIR /app
+# Copy only Cargo files for dependency caching
+COPY Cargo.toml Cargo.lock ./
+COPY backend/Cargo.toml ./backend/
+COPY frontend/Cargo.toml ./frontend/
+COPY shared/Cargo.toml ./shared/
+COPY migration/Cargo.toml ./migration/
+
 FROM deps as builder
 WORKDIR /app
+
+# Copy lockfiles first for better caching
+COPY Cargo.toml Cargo.lock ./
+COPY backend/Cargo.toml ./backend/
+COPY frontend/Cargo.toml ./frontend/
+COPY shared/Cargo.toml ./shared/
+COPY migration/Cargo.toml ./migration/
+
+# Create dummy source files to cache dependencies
+RUN mkdir -p backend/src frontend/src shared/src migration/src && \
+    echo "fn main() {}" > backend/src/main.rs && \
+    echo "fn main() {}" > migration/src/main.rs && \
+    echo "pub fn dummy() {}" > shared/src/lib.rs && \
+    echo "pub fn dummy() {}" > frontend/src/lib.rs
+
+# Build dependencies only (this layer will be cached)
+ENV SQLX_OFFLINE=true
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/usr/local/cargo/git \
+    --mount=type=cache,target=/app/target \
+    cargo build --release && \
+    cargo build --release --target wasm32-unknown-unknown -p frontend
+
+# Now copy actual source code
 COPY . .
 
-ENV SQLX_OFFLINE=true
+# Touch files to trigger rebuild with real source
+RUN touch backend/src/main.rs frontend/src/lib.rs shared/src/lib.rs
 
-# Debug: Build backend and frontend explicitly to see errors
-RUN cargo build --release --bin backend -vv
-RUN cargo build --release --lib --target wasm32-unknown-unknown -p frontend -vv
-
-# Build the app (Release mode)
-RUN cargo leptos build --release -vv
+# Build the actual app with cached dependencies
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/usr/local/cargo/git \
+    --mount=type=cache,target=/app/target \
+    cargo leptos build --release -vv && \
+    cp -r target/release/backend /tmp/ && \
+    cp -r target/site /tmp/
 
 # Runtime Stage
 FROM debian:bookworm-slim as runtime
@@ -46,8 +83,8 @@ RUN apt-get update -y \
 
 # Copy artifacts from builder
 COPY --from=builder /usr/local/cargo/bin/sqlx /usr/local/bin/sqlx
-COPY --from=builder /app/target/release/backend /app/backend
-COPY --from=builder /app/target/site /app/site
+COPY --from=builder /tmp/backend /app/backend
+COPY --from=builder /tmp/site /app/site
 
 # Set environment
 ENV LEPTOS_SITE_ADDR="0.0.0.0:3000"

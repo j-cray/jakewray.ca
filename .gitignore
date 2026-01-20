@@ -3,6 +3,10 @@
 Cargo.lock
 **/*.rs.bk
 
+# Cargo cache (keep local, don't commit)
+.cargo/registry/
+.cargo/git/
+
 # Nix
 result
 result-*

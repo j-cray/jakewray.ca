@@ -1,0 +1,28 @@
+[build]
+# Incremental compilation for faster rebuilds (local dev only)
+incremental = true
+
+[net]
+# Use sparse registry for faster downloads
+git-fetch-with-cli = true
+
+[profile.dev]
+# Optimize dependencies in dev mode for faster iteration
+opt-level = 1
+
+[profile.dev.package."*"]
+# Optimize all dependencies even in dev mode
+opt-level = 3
+
+[target.x86_64-unknown-linux-gnu]
+# Use mold linker if available for faster linking (Linux)
+# linker = "clang"
+# rustflags = ["-C", "link-arg=-fuse-ld=mold"]
+
+[target.x86_64-apple-darwin]
+# Use lld linker on macOS for faster linking
+# rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+[target.aarch64-apple-darwin]
+# Use lld linker on Apple Silicon for faster linking  
+# rustflags = ["-C", "link-arg=-fuse-ld=lld"]
