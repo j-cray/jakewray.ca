@@ -27,26 +27,56 @@
         };
       in {
         devShells.default = pkgs.mkShell {
+          name = "jakewray-dev";
+          
           buildInputs = with pkgs; [
+            # Rust toolchain
             rustToolchain
+            cargo-leptos
+            
+            # Build dependencies
             pkg-config
             openssl
-            postgresql # for libpq and psql
+            
+            # Database
+            postgresql
             sqlx-cli
-            cargo-leptos
+            
+            # Styling
             sass
+            dart-sass
+            
+            # Container tools
             docker
             docker-compose
             podman
             podman-compose
-            trunk # alternative to cargo-leptos, good to have
-            nodejs # for npm/npx if needed for tailwind or other js tools (though avoided per user request)
+            
+            # Web compilation (optional)
+            nodejs
+            
+            # Cloud deployment
             google-cloud-sdk
+            
+            # Development tools
+            git
+            just
           ];
 
           shellHook = ''
             export RUST_SRC_PATH=${pkgs.rustPlatform.rustLibSrc}
-            echo "Environment prepared for jakewray.dev development"
+            export RUST_LOG=info
+            export DATABASE_URL="postgres://admin:password@127.0.0.1:5432/portfolio"
+            
+            echo "🚀 jakewray.dev development environment loaded"
+            echo "   Rust: $(rustc --version)"
+            echo "   Cargo: $(cargo --version)"
+            echo "   Database: PostgreSQL (docker-compose up -d db)"
+            echo ""
+            echo "📚 Quick commands:"
+            echo "   cargo leptos watch      - Start dev server"
+            echo "   ./scripts/setup-dev.sh  - Setup local database"
+            echo "   docker-compose down     - Stop services"
           '';
         };
       }

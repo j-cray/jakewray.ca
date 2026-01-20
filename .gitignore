@@ -1,0 +1,50 @@
+# Rust
+/target/
+Cargo.lock
+**/*.rs.bk
+
+# Nix
+result
+result-*
+.envrc.local
+.env.local
+
+# direnv
+.direnv/
+.direnv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.*.local
+
+# Dependencies
+node_modules/
+dist/
+
+# Build outputs
+*.wasm
+pkg/
+site/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.db
+*.sqlite
+
+# Logs
+*.log
+logs/
+
+# Docker
+docker-compose.override.yml

@@ -1,0 +1,17 @@
+# direnv library functions for common development tasks
+# This file is auto-loaded by direnv in the project directory
+
+# Add local scripts to PATH
+PATH_add_relative scripts
+
+# Function to start dev services
+dev_services() {
+  docker-compose up -d db
+  echo "✅ Services started (db)"
+}
+
+# Function to stop dev services
+dev_clean() {
+  docker-compose down
+  echo "✅ Services stopped"
+}

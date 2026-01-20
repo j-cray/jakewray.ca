@@ -2,21 +2,60 @@
 
 ## Prerequisites
 
-- **Rust**: [Install from rustup.rs](https://rustup.rs/)
+- **Nix with Flakes** (recommended): [Install Nix](https://nixos.org/download)
+- **direnv** (optional but recommended): `brew install direnv`
+- OR **Rust**: [Install from rustup.rs](https://rustup.rs/)
 - **Docker & Docker Compose**: [Install Docker Desktop](https://www.docker.com/products/docker-desktop)
-- **Node.js** (optional): For asset building
 
-## Quick Start
+## Setup with Nix + direnv (Recommended)
 
-### 1. Install cargo-leptos
-This is the build tool for Leptos projects:
+### 1. Install direnv
 ```bash
-cargo install cargo-leptos
+brew install direnv
 ```
 
-### 2. Run the setup script
+### 2. Hook direnv into your shell
+Add to your `~/.zshrc` or `~/.bashrc`:
 ```bash
-chmod +x scripts/setup-dev.sh
+eval "$(direnv hook zsh)"  # or bash
+```
+
+### 3. Allow direnv in project
+```bash
+cd /path/to/jakewray.dev
+direnv allow
+```
+
+This will:
+- ✅ Load Nix flake automatically
+- ✅ Set environment variables from `.envrc`
+- ✅ Add dev tools to PATH
+- ✅ Set database connection string
+
+### 4. Verify environment loaded
+```bash
+cargo --version
+rustc --version
+docker --version
+psql --version
+```
+
+All should show versions without errors.
+
+## Setup with Nix only (no direnv)
+
+If you don't want direnv, manually enter the dev environment:
+```bash
+nix flake update
+nix develop
+```
+
+Then you can run commands as normal.
+
+## Quick Start (Any Setup Method)
+
+### 1. Run setup script
+```bash
 ./scripts/setup-dev.sh
 ```
 
@@ -25,7 +64,7 @@ This will:
 - ✅ Run database migrations
 - ✅ Create default admin user (`admin` / `admin123`)
 
-### 3. Start the development server
+### 2. Start the development server
 ```bash
 cargo leptos watch
 ```
