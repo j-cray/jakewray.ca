@@ -8,7 +8,7 @@ pub fn Footer() -> impl IntoView {
                 <p>"© 2026 Jake Wray. All rights reserved."</p>
                 <div class="flex justify-center gap-4 mt-4">
                     <a href="/contact" class="hover:underline">"Contact"</a>
-                    <a href="/admin" class="hover:underline">"Admin"</a>
+                    <a href="/admin/login" class="hover:underline">"Admin"</a>
                 </div>
             </div>
         </footer>
