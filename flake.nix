@@ -33,6 +33,7 @@
             # Rust toolchain
             rustToolchain
             cargo-leptos
+            wasm-bindgen-cli
             
             # Build dependencies
             pkg-config
