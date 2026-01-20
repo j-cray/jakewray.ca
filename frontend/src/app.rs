@@ -61,7 +61,7 @@ pub fn App() -> impl IntoView {
                 <Script type_="module">
                     {r#"
                         import init from '/pkg/jakewray_ca.js';
-                        init('/pkg/jakewray_ca.wasm');
+                        init({ module_or_path: '/pkg/jakewray_ca.wasm' });
                     "#}
                 </Script>
         </body>
