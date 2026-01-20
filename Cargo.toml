@@ -45,3 +45,6 @@ bin-target = "backend"
 lib-package = "frontend"
 # The name of the lib target in the package to build as the frontend
 lib-target = "frontend"
+lib-features = ["hydrate"]
+# Ensure server builds include SSR features
+bin-features = ["ssr"]

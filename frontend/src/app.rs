@@ -58,7 +58,12 @@ pub fn App() -> impl IntoView {
                         <Footer/>
                     </div>
                 </Router>
-                <HydrationScripts options=Default::default()/>
+                <Script type_="module">
+                    {r#"
+                        import init, { hydrate } from '/pkg/jakewray_ca.js';
+                        init('/pkg/jakewray_ca.wasm').then(() => hydrate());
+                    "#}
+                </Script>
         </body>
         </html>
     }
