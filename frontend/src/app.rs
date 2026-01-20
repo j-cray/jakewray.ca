@@ -47,6 +47,7 @@ pub fn App() -> impl IntoView {
                                 <Route path=path!("/programming") view=ProgrammingPage/>
 
                                 // Admin Routes
+                                <Route path=path!("/admin") view=AdminRedirect/>
                                 <Route path=path!("/admin/dashboard") view=AdminDashboard/>
                                 <Route path=path!("/admin/login") view=AdminLoginPage/>
                                 <Route path=path!("/admin/compose") view=AdminComposer/>
@@ -65,6 +66,15 @@ pub fn App() -> impl IntoView {
 #[component]
 fn SectionLayout() -> impl IntoView {
     view! { <Outlet/> }
+}
+
+#[component]
+fn AdminRedirect() -> impl IntoView {
+    let navigate = leptos_router::hooks::use_navigate();
+    leptos::prelude::Effect::new(move || {
+        navigate("/admin/login", Default::default());
+    });
+    view! {}
 }
 
 #[component]
