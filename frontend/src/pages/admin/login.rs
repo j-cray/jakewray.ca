@@ -100,10 +100,10 @@ pub fn AdminLoginPage() -> impl IntoView {
     };
 
     view! {
-        <div class="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-            <div class="card w-full max-w-md bg-white p-8 rounded-lg shadow-lg border border-indigo-100">
-                <h1 class="text-3xl font-bold mb-2 text-center text-indigo-900">"Admin Access"</h1>
-                <p class="text-center text-gray-600 mb-6">"Secure dashboard login"</p>
+        <div class="center-page">
+            <div class="card form-card">
+                <h1 class="mb-2 text-primary text-center">"Admin Access"</h1>
+                <p class="text-muted text-center mb-6">"Secure dashboard login"</p>
                 
                 {move || {
                     (!error.get().is_empty()).then(|| view! {
@@ -113,40 +113,34 @@ pub fn AdminLoginPage() -> impl IntoView {
                     })
                 }}
 
-                <form autocomplete="on" on:submit=on_submit class="flex flex-col gap-4">
-                    <div class="flex flex-col gap-2">
-                        <label for="username" class="text-sm font-semibold text-gray-700">"Username"</label>
+                <form autocomplete="on" on:submit=on_submit>
+                    <div class="form-group">
+                        <label for="username">"Username"</label>
                         <input
                             id="username"
                             name="username"
                             type="text"
                             placeholder="Enter username"
                             autocomplete="username"
-                            class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                             on:input=move |ev| set_username.set(event_target_value(&ev))
                             disabled=move || loading.get()
                         />
                     </div>
                     
-                    <div class="flex flex-col gap-2">
-                        <label for="password" class="text-sm font-semibold text-gray-700">"Password"</label>
+                    <div class="form-group">
+                        <label for="password">"Password"</label>
                         <input
                             id="password"
                             name="password"
                             type="password"
                             placeholder="Enter password"
                             autocomplete="current-password"
-                            class="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                             on:input=move |ev| set_password.set(event_target_value(&ev))
                             disabled=move || loading.get()
                         />
                     </div>
                     
-                    <button 
-                        type="submit" 
-                        class="bg-indigo-600 text-white p-3 rounded-md font-bold hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled=move || loading.get()
-                    >
+                    <button type="submit" class="btn btn-primary" disabled=move || loading.get()>
                         {move || if loading.get() { "Logging in..." } else { "Login" }}
                     </button>
                 </form>

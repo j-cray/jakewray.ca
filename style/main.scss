@@ -261,6 +261,20 @@ textarea {
   margin-top: 1rem;
 }
 
+/* Layout helpers for auth pages */
+.center-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-secondary);
+}
+
+.form-card {
+  width: 100%;
+  max-width: 420px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   h1 {
