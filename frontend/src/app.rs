@@ -11,13 +11,24 @@ use crate::pages::sections::{
 };
 use leptos::prelude::*;
 use leptos_meta::*;
+use std::net::SocketAddr;
 use leptos_router::components::*;
 use leptos_router::*;
 
 #[component]
 pub fn App() -> impl IntoView {
     provide_meta_context();
-    let options = use_context::<leptos::config::LeptosOptions>();
+    let options = use_context::<leptos::config::LeptosOptions>().unwrap_or_else(|| {
+        // Fallback for contexts that don't inject options (e.g., route list gen / client mount).
+        // Matches defaults used in backend when env vars are absent.
+        leptos::config::LeptosOptions::builder()
+            .output_name("jakewray_ca".to_string())
+            .site_pkg_dir("pkg".to_string())
+            .site_root("target/site".to_string())
+            .site_addr("0.0.0.0:3000".parse::<SocketAddr>().unwrap())
+            .reload_port(3001)
+            .build()
+    });
 
     view! {
         <html lang="en">
@@ -61,10 +72,7 @@ pub fn App() -> impl IntoView {
                     </div>
                 </Router>
 
-                {move || options
-                    .as_ref()
-                    .map(|opts| view! { <HydrationScripts options=opts.clone()/> })
-                }
+                <HydrationScripts options=options.clone()/>
             </body>
         </html>
     }
