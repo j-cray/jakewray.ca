@@ -9,7 +9,6 @@ use crate::pages::contact::ContactPage;
 use crate::pages::sections::{
     CreativeWritingPage, JournalismPage, MusicPage, PersonalPage, ProgrammingPage, VisualArtPage,
 };
-use leptos::config::LeptosOptions;
 use leptos::prelude::*;
 use leptos_meta::*;
 use leptos_router::components::*;
@@ -18,7 +17,7 @@ use leptos_router::*;
 #[component]
 pub fn App() -> impl IntoView {
     provide_meta_context();
-    let options = expect_context::<LeptosOptions>();
+    let options = use_context::<leptos::config::LeptosOptions>();
 
     view! {
         <Html attr:lang="en"/>
@@ -59,7 +58,10 @@ pub fn App() -> impl IntoView {
             </div>
         </Router>
 
-        <HydrationScripts options=options/>
+        {move || options
+            .as_ref()
+            .map(|opts| view! { <HydrationScripts options=opts.clone()/> })
+        }
     }
 }
 
