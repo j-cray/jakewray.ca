@@ -47,7 +47,7 @@ pub fn App() -> impl IntoView {
                                 <Route path=path!("/programming") view=ProgrammingPage/>
 
                                 // Admin Routes
-                                <Route path=path!("/admin") view=AdminDashboard/>
+                                <Route path=path!("/admin/dashboard") view=AdminDashboard/>
                                 <Route path=path!("/admin/login") view=AdminLoginPage/>
                                 <Route path=path!("/admin/compose") view=AdminComposer/>
                                 <Route path=path!("/admin/sync") view=AdminSyncManager/>
