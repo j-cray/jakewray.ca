@@ -104,6 +104,10 @@ a {
   padding: 1.5rem;
   border: 1px solid var(--border-color);
   transition: all 200ms ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  color: inherit;
 
   &:hover {
     box-shadow: var(--shadow-lg);
