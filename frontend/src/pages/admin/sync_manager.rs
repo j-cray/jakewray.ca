@@ -26,16 +26,16 @@ pub fn AdminSyncManager() -> impl IntoView {
             <div class="card mb-8">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-bold">"Terrace Standard"</h3>
-                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">"Active"</span>
+                    <span class="text-muted">"Active"</span>
                 </div>
-                <p class="mb-2">"Mirroring articles by: "<span class="font-mono bg-gray-100 px-2 py-1 rounded">"Jake Wray"</span></p>
+                <p class="mb-2">"Mirroring articles by: "<span class="text-muted">"Jake Wray"</span></p>
                 <div class="flex justify-between items-center mt-6">
                     <div>
-                        <p class="text-sm text-muted">"Status: " <span class="font-medium text-black">{sync_status}</span></p>
-                        <p class="text-sm text-muted">"Last Sync: " <span class="font-medium text-black">{last_sync}</span></p>
+                        <p class="text-sm text-muted">"Status: " <span class="font-medium">{sync_status}</span></p>
+                        <p class="text-sm text-muted">"Last Sync: " <span class="font-medium">{last_sync}</span></p>
                     </div>
                     <button
-                        class="px-6 py-2 bg-black text-white rounded-md font-bold disabled:opacity-50"
+                        class="btn btn-primary"
                         on:click=trigger_sync
                         disabled=move || sync_status.get() == "Syncing..."
                     >

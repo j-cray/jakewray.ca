@@ -24,6 +24,16 @@ pub fn AdminLoginPage() -> impl IntoView {
 
     let navigate = use_navigate();
 
+    let location = use_location();
+
+    Effect::new(move || {
+        if let Some(err) = location.query.get().get("error") {
+            if err == "invalid" {
+                set_error.set("Invalid username or password.".to_string());
+            }
+        }
+    });
+
     let on_submit = move |ev: leptos::ev::SubmitEvent| {
         ev.prevent_default();
         web_sys::console::log_1(&"[Login] Form submitted".into());

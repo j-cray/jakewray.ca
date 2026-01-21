@@ -8,6 +8,9 @@ use axum::body::to_bytes;
 use axum::http::{header, Request};
 use axum::body::Body;
 use axum::response::Json;
+use axum::response::Html;
+use axum::response::IntoResponse;
+use axum::response::Redirect;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use jsonwebtoken::{encode, Header, EncodingKey};
@@ -46,11 +49,16 @@ pub fn router(state: crate::state::AppState) -> Router<crate::state::AppState> {
 async fn login(
     State(pool): State<PgPool>,
     req: Request<Body>,
-) -> Result<Json<LoginResponse>, (StatusCode, String)> {
+) -> Result<axum::response::Response, (StatusCode, String)> {
     let (parts, body) = req.into_parts();
     let content_type = parts
         .headers
         .get(header::CONTENT_TYPE)
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("");
+    let accept = parts
+        .headers
+        .get(header::ACCEPT)
         .and_then(|v| v.to_str().ok())
         .unwrap_or("");
     let bytes = to_bytes(body, 64 * 1024)
@@ -72,13 +80,25 @@ async fn login(
     let user = sqlx::query!("SELECT id, password_hash FROM users WHERE username = $1", &req.username)
         .fetch_optional(&pool)
         .await
-        .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Database error".to_string()))?
-        .ok_or((StatusCode::UNAUTHORIZED, "Invalid credentials".to_string()))?;
+        .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Database error".to_string()))?;
 
-    // Verify password (using bcrypt in real implementation)
-    if user.password_hash != req.password {
+    let is_invalid = match user {
+        Some(ref u) => u.password_hash != req.password,
+        None => true,
+    };
+
+    if is_invalid {
+        if content_type.contains("application/x-www-form-urlencoded")
+            || content_type.contains("multipart/form-data")
+            || accept.contains("text/html")
+        {
+            return Ok(Redirect::to("/admin/login?error=invalid").into_response());
+        }
+
         return Err((StatusCode::UNAUTHORIZED, "Invalid credentials".to_string()));
     }
+
+    let user = user.expect("User should exist when credentials are valid");
 
     let exp = (Utc::now() + Duration::hours(24)).timestamp() as usize;
     let claims = Claims {
@@ -93,7 +113,18 @@ async fn login(
     )
     .map_err(|_| (StatusCode::INTERNAL_SERVER_ERROR, "Token generation failed".to_string()))?;
 
-    Ok(Json(LoginResponse { token }))
+    if content_type.contains("application/x-www-form-urlencoded")
+        || content_type.contains("multipart/form-data")
+        || accept.contains("text/html")
+    {
+        let html = format!(
+            r#"<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=/admin/dashboard"></head><body><script>localStorage.setItem("admin_token","{}");location.replace("/admin/dashboard");</script></body></html>"#,
+            token
+        );
+        Ok(Html(html).into_response())
+    } else {
+        Ok(Json(LoginResponse { token }).into_response())
+    }
 }
 
 async fn me(headers: HeaderMap) -> Result<&'static str, StatusCode> {
