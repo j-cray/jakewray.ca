@@ -7,7 +7,7 @@ use crate::pages::admin::login::AdminLoginPage;
 use crate::pages::admin::sync_manager::AdminSyncManager;
 use crate::pages::contact::ContactPage;
 use crate::pages::sections::{
-    CreativeWritingPage, JournalismPage, MusicPage, PersonalPage, ProgrammingPage, VisualArtPage,
+    CreativeWritingPage, JournalismPage, PersonalBlogPage, PersonalPage, ProgrammingPage,
 };
 use leptos::prelude::*;
 use leptos_meta::*;
@@ -54,9 +54,11 @@ pub fn App() -> impl IntoView {
                                 // Portfolio
                                 <Route path=path!("/journalism") view=JournalismPage/>
                                 <Route path=path!("/personal") view=PersonalPage/>
-                                <Route path=path!("/creative-writing") view=CreativeWritingPage/>
-                                <Route path=path!("/music") view=MusicPage/>
-                                <Route path=path!("/visual-art") view=VisualArtPage/>
+                                <Route path=path!("/personal/blog") view=PersonalBlogPage/>
+                                <Route path=path!("/personal/writing") view=CreativeWritingPage/>
+                                // Hidden for now:
+                                // <Route path=path!("/music") view=MusicPage/>
+                                // <Route path=path!("/visual-art") view=VisualArtPage/>
                                 <Route path=path!("/programming") view=ProgrammingPage/>
 
                                 // Admin Routes

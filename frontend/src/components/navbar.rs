@@ -12,9 +12,7 @@ pub fn Navbar() -> impl IntoView {
                 <nav class="nav-links">
                     <a class="nav-link" href="/journalism">"Journalism"</a>
                     <a class="nav-link" href="/personal">"Personal"</a>
-                    <a class="nav-link" href="/creative-writing">"Writing"</a>
-                    <a class="nav-link" href="/music">"Music"</a>
-                    <a class="nav-link" href="/visual-art">"Art"</a>
+                    <a class="nav-link" href="/personal/blog">"Blog"</a>
                     <a class="nav-link" href="/programming">"Code"</a>
                     <a class="nav-link nav-link-primary" href="/about">"About"</a>
                 </nav>
