@@ -70,9 +70,13 @@
             export RUST_LOG=info
             export DATABASE_URL="postgres://admin:password@127.0.0.1:5432/portfolio"
             
+            # Set gcloud project for this repo
+            gcloud config set project jakewray-portfolio 2>/dev/null || true
+            
             echo "🚀 jakewray.dev development environment loaded"
             echo "   Rust: $(rustc --version)"
             echo "   Cargo: $(cargo --version)"
+            echo "   GCloud: $(gcloud config get-value project)"
             echo "   Database: PostgreSQL (docker-compose up -d db)"
             echo ""
             echo "📚 Quick commands:"
