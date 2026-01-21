@@ -3,7 +3,7 @@ pub mod components;
 pub mod pages;
 pub use app::*;
 
-#[cfg(feature = "hydrate")]
+#[cfg(target_arch = "wasm32")]
 #[wasm_bindgen::prelude::wasm_bindgen]
 pub fn hydrate() {
     console_error_panic_hook::set_once();

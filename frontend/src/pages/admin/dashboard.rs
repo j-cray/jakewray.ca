@@ -1,13 +1,13 @@
 use leptos::prelude::*;
-#[cfg(feature = "hydrate")]
+#[cfg(target_arch = "wasm32")]
 use leptos_router::hooks::*;
 
 #[component]
 pub fn AdminDashboard() -> impl IntoView {
-    #[cfg(feature = "hydrate")]
+    #[cfg(target_arch = "wasm32")]
     let navigate = use_navigate();
 
-    #[cfg(feature = "hydrate")]
+    #[cfg(target_arch = "wasm32")]
     {
         // Check if user is authenticated
         let navigate_clone = navigate.clone();
@@ -22,7 +22,7 @@ pub fn AdminDashboard() -> impl IntoView {
         });
     }
 
-    #[cfg(feature = "hydrate")]
+    #[cfg(target_arch = "wasm32")]
     let logout = move |_| {
         let window = web_sys::window().unwrap();
         let local_storage = window.local_storage().unwrap().unwrap();
@@ -30,7 +30,7 @@ pub fn AdminDashboard() -> impl IntoView {
         navigate("/admin/login", Default::default());
     };
 
-    #[cfg(not(feature = "hydrate"))]
+    #[cfg(not(target_arch = "wasm32"))]
     let logout = move |_| {};
 
     view! {

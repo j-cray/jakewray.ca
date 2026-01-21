@@ -1,7 +1,7 @@
-#[cfg(feature = "hydrate")]
+#[cfg(target_arch = "wasm32")]
 use gloo_net::http::Request;
 use leptos::prelude::*;
-#[cfg(feature = "hydrate")]
+#[cfg(target_arch = "wasm32")]
 use leptos::task::spawn_local;
 use leptos_router::hooks::*;
 use serde::{Deserialize, Serialize};
@@ -34,7 +34,7 @@ pub fn AdminLoginPage() -> impl IntoView {
         }
     });
 
-    #[cfg(feature = "hydrate")]
+    #[cfg(target_arch = "wasm32")]
     let on_submit = {
         let navigate = use_navigate();
         move |ev: leptos::ev::SubmitEvent| {
@@ -113,7 +113,7 @@ pub fn AdminLoginPage() -> impl IntoView {
         }
     };
 
-    #[cfg(not(feature = "hydrate"))]
+    #[cfg(not(target_arch = "wasm32"))]
     let on_submit = move |_ev: leptos::ev::SubmitEvent| {};
 
     view! {
