@@ -32,9 +32,11 @@ pub fn JournalismPage() -> impl IntoView {
                                         .map(|src| view! { <img src=src class="h-full w-full object-cover" alt="article thumbnail"/> })
                                         .unwrap_or_else(|| {
                                             view! {
-                                                <div class="flex h-full items-center justify-center text-sm text-gray-500">
-                                                    "Image coming soon"
-                                                </div>
+                                                <>
+                                                    <div class="flex h-full items-center justify-center text-sm text-gray-500">
+                                                        "Image coming soon"
+                                                    </div>
+                                                </>
                                             }
                                         })}
                                 </div>
@@ -93,9 +95,9 @@ pub fn JournalismArticlePage() -> impl IntoView {
                                 })}
                                 <div class="article-content prose max-w-none" inner_html=content_html></div>
                             </>
-                        }.into_view()
+                        }
                     }
-                    None => view! { <p>"Article not found."</p> }.into_view(),
+                    None => view! { <p>"Article not found."</p> },
                 }
             }}
         </div>
