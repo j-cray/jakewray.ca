@@ -34,15 +34,9 @@ pub fn JournalismPage() -> impl IntoView {
                             .take(3)
                             .collect::<Vec<_>>()
                             .join(" ");
+                        let image = article.images.get(0).cloned();
                         let thumb_src = image.clone().unwrap_or_else(|| "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='400' height='300' fill='%23e5e7eb'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-size='16' font-family='Inter, sans-serif'>Image coming soon</text></svg>".to_string());
                         let date = article.display_date.clone();
-                        let image = article.images.get(0).cloned();
-                        let thumb = image
-                            .as_ref()
-                            .map(|src| view! { <img src=src class="journalism-img" alt="article thumbnail"/> }.into_any())
-                            .unwrap_or_else(|| {
-                                view! { <div class="journalism-placeholder">"Image coming soon"</div> }.into_any()
-                            });
                         view! {
                             <a href=format!("/journalism/{}", slug) class="journalism-card">
                                 <div class="journalism-thumb">
@@ -73,8 +67,8 @@ pub fn JournalismArticlePage() -> impl IntoView {
     view! {
         <div class="container py-12 max-w-4xl">
             {move || {
-                match article() {
-                    Some(article) => {
+                article()
+                    .map(|article| {
                         let display_date = article.display_date.clone();
                         let title = article.title.clone();
                         let source_url = article.source_url.clone();
@@ -104,9 +98,9 @@ pub fn JournalismArticlePage() -> impl IntoView {
                                 <div class="article-content prose max-w-none" inner_html=content_html></div>
                             </div>
                         }
-                    }
-                    None => view! { <div><p>"Article not found."</p></div> },
-                }
+                        .into_view()
+                    })
+                    .unwrap_or_else(|| view! { <div><p>"Article not found."</p></div> }.into_view())
             }}
         </div>
     }
