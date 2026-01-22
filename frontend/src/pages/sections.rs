@@ -28,15 +28,15 @@ pub fn JournalismPage() -> impl IntoView {
                                 class="block rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
                             >
                                 <div class="aspect-[4/3] w-full overflow-hidden rounded-md bg-gray-100">
-                                    {image
-                                        .map(|src| view! { <img src=src class="h-full w-full object-cover" alt="article thumbnail"/> }.into_view())
-                                        .unwrap_or_else(|| {
-                                            view! {
-                                                <div class="flex h-full items-center justify-center text-sm text-gray-500">
-                                                    "Image coming soon"
-                                                </div>
-                                            }.into_view()
-                                        })}
+                                    {if let Some(src) = image {
+                                        view! { <img src=src class="h-full w-full object-cover" alt="article thumbnail"/> }
+                                    } else {
+                                        view! {
+                                            <div class="flex h-full items-center justify-center text-sm text-gray-500">
+                                                "Image coming soon"
+                                            </div>
+                                        }
+                                    }}
                                 </div>
                                 <div class="mt-4 space-y-2">
                                     <p class="text-sm text-gray-500">{date}</p>
@@ -93,9 +93,13 @@ pub fn JournalismArticlePage() -> impl IntoView {
                                 })}
                                 <div class="article-content prose max-w-none" inner_html=content_html></div>
                             </>
-                        }.into_view()
+                        }
                     }
-                    None => view! { <p>"Article not found."</p> }.into_view(),
+                    None => view! { 
+                        <>
+                            <p>"Article not found."</p> 
+                        </>
+                    },
                 }
             }}
         </div>
