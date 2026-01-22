@@ -38,6 +38,10 @@ dist/
 pkg/
 site/
 
+# Temporary files
+.tmp/
+.tmp
+
 # OS
 .DS_Store
 Thumbs.db

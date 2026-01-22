@@ -697,6 +697,7 @@ dependencies = [
  "leptos",
  "leptos_meta",
  "leptos_router",
+ "once_cell",
  "serde",
  "serde_json",
  "shared",
