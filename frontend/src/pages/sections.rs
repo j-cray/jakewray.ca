@@ -1,7 +1,7 @@
 use crate::data::journalism;
 use leptos::prelude::*;
+use leptos::IntoAny;
 use leptos_router::hooks::use_params_map;
-use leptos::either::Either;
 
 #[component]
 pub fn JournalismPage() -> impl IntoView {
@@ -14,7 +14,7 @@ pub fn JournalismPage() -> impl IntoView {
                 "Reporting on northern communities, Indigenous culture, and public interest stories."
             </p>
 
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 auto-rows-max">
+            <div class="journalism-grid">
                 {articles
                     .iter()
                     .map(|article| {
@@ -23,35 +23,22 @@ pub fn JournalismPage() -> impl IntoView {
                         let excerpt = article.excerpt.clone();
                         let date = article.display_date.clone();
                         let image = article.images.get(0).cloned();
+                        let thumb = image
+                            .as_ref()
+                            .map(|src| view! { <img src=src class="journalism-img" alt="article thumbnail"/> }.into_any())
+                            .unwrap_or_else(|| {
+                                view! { <div class="journalism-placeholder">"Image coming soon"</div> }.into_any()
+                            });
                         view! {
-                            <a
-                                href=format!("/journalism/{}", slug)
-                                class="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:border-blue-300 hover:shadow-lg hover:-translate-y-1"
-                            >
-                                <div class="aspect-video w-full overflow-hidden bg-gray-100">
-                                    {if let Some(src) = image {
-                                        Either::Left(view! { 
-                                            <img src=src class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" alt="article thumbnail"/>
-                                        })
-                                    } else {
-                                        Either::Right(view! {
-                                            <div class="flex h-full items-center justify-center text-sm text-gray-500">
-                                                "Image coming soon"
-                                            </div>
-                                        })
-                                    }}
+                            <a href=format!("/journalism/{}", slug) class="journalism-card">
+                                <div class="journalism-thumb">
+                                    {thumb}
                                 </div>
-                                <div class="flex flex-1 flex-col p-4">
-                                    <p class="text-xs font-medium uppercase tracking-wide text-gray-500">{date}</p>
-                                    <h3 class="mt-2 mb-2 text-base font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                                        {title}
-                                    </h3>
-                                    <p class="text-sm text-gray-600 line-clamp-2 flex-1">
-                                        {excerpt}
-                                    </p>
-                                    <div class="mt-3 text-xs font-medium text-blue-600 group-hover:text-blue-700 transition-colors">
-                                        "Read more →"
-                                    </div>
+                                <div class="journalism-body">
+                                    <p class="journalism-date">{date}</p>
+                                    <h3 class="journalism-title">{title}</h3>
+                                    <p class="journalism-excerpt">{excerpt}</p>
+                                    <div class="journalism-link">"Read more →"</div>
                                 </div>
                             </a>
                         }
