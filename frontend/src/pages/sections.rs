@@ -1,5 +1,4 @@
 use leptos::prelude::*;
-use leptos_router::hooks::use_navigate;
 
 #[component]
 pub fn JournalismPage() -> impl IntoView {
@@ -20,26 +19,18 @@ pub fn JournalismPage() -> impl IntoView {
 
 #[component]
 pub fn PersonalPage() -> impl IntoView {
-    let navigate = use_navigate();
-    
     view! {
         <div class="container py-12">
             <h1 class="text-4xl mb-6">"Personal"</h1>
             <p class="text-gray-600 mb-8">"Blog, Creative Writing, Photography, and Videography."</p>
             
             <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <a href="/personal/blog" class="card hover:shadow-lg transition-shadow" on:click=move |ev| {
-                    ev.prevent_default();
-                    navigate("/personal/blog", Default::default());
-                }>
+                <a href="/personal/blog" class="card hover:shadow-lg transition-shadow">
                     <h3 class="text-xl font-bold mb-2">"Blog"</h3>
                     <p class="text-muted">"Personal thoughts and musings"</p>
                 </a>
                 
-                <a href="/personal/writing" class="card hover:shadow-lg transition-shadow" on:click=move |ev| {
-                    ev.prevent_default();
-                    navigate("/personal/writing", Default::default());
-                }>
+                <a href="/personal/writing" class="card hover:shadow-lg transition-shadow">
                     <h3 class="text-xl font-bold mb-2">"Creative Writing"</h3>
                     <p class="text-muted">"Stories, novels, and poetry"</p>
                 </a>
