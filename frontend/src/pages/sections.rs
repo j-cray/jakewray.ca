@@ -24,36 +24,38 @@ pub fn JournalismPage() -> impl IntoView {
                         let date = article.display_date.clone();
                         let image = article.images.get(0).cloned();
                         view! {
-                            <a
-                                href=format!("/journalism/{}", slug)
-                                class="group flex h-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:border-blue-300 hover:shadow-lg hover:-translate-y-1"
-                            >
-                                <div class="aspect-[4/3] w-full overflow-hidden bg-gray-100">
-                                    {if let Some(src) = image {
-                                        Either::Left(view! { 
-                                            <img src=src class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" alt="article thumbnail"/>
-                                        })
-                                    } else {
-                                        Either::Right(view! {
-                                            <div class="flex h-full items-center justify-center text-sm text-gray-500">
-                                                "Image coming soon"
-                                            </div>
-                                        })
-                                    }}
-                                </div>
-                                <div class="flex flex-1 flex-col p-5">
-                                    <p class="text-xs font-medium uppercase tracking-wide text-gray-500">{date}</p>
-                                    <h3 class="mt-2 mb-3 text-lg font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                                        {title}
-                                    </h3>
-                                    <p class="text-sm text-gray-600 line-clamp-3 flex-1">
-                                        {excerpt}
-                                    </p>
-                                    <div class="mt-4 text-sm font-medium text-blue-600 group-hover:text-blue-700 transition-colors">
-                                        "Read more →"
+                            <div class="h-full">
+                                <a
+                                    href=format!("/journalism/{}", slug)
+                                    class="group flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:border-blue-300 hover:shadow-lg hover:-translate-y-1"
+                                >
+                                    <div class="aspect-[4/3] w-full overflow-hidden bg-gray-100">
+                                        {if let Some(src) = image {
+                                            Either::Left(view! { 
+                                                <img src=src class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" alt="article thumbnail"/>
+                                            })
+                                        } else {
+                                            Either::Right(view! {
+                                                <div class="flex h-full items-center justify-center text-sm text-gray-500">
+                                                    "Image coming soon"
+                                                </div>
+                                            })
+                                        }}
                                     </div>
-                                </div>
-                            </a>
+                                    <div class="flex flex-1 flex-col p-5">
+                                        <p class="text-xs font-medium uppercase tracking-wide text-gray-500">{date}</p>
+                                        <h3 class="mt-2 mb-3 text-lg font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                                            {title}
+                                        </h3>
+                                        <p class="text-sm text-gray-600 line-clamp-3 flex-1">
+                                            {excerpt}
+                                        </p>
+                                        <div class="mt-4 text-sm font-medium text-blue-600 group-hover:text-blue-700 transition-colors">
+                                            "Read more →"
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
                         }
                     })
                     .collect_view()}
