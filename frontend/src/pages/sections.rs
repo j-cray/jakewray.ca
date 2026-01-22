@@ -1,7 +1,5 @@
 use crate::data::journalism;
-use leptos::either::Either;
 use leptos::prelude::*;
-use leptos::prelude::IntoAny;
 use leptos_router::hooks::use_params_map;
 
 #[component]
@@ -36,6 +34,7 @@ pub fn JournalismPage() -> impl IntoView {
                             .take(3)
                             .collect::<Vec<_>>()
                             .join(" ");
+                        let thumb_src = image.clone().unwrap_or_else(|| "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='400' height='300' fill='%23e5e7eb'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-size='16' font-family='Inter, sans-serif'>Image coming soon</text></svg>".to_string());
                         let date = article.display_date.clone();
                         let image = article.images.get(0).cloned();
                         let thumb = image
@@ -47,7 +46,8 @@ pub fn JournalismPage() -> impl IntoView {
                         view! {
                             <a href=format!("/journalism/{}", slug) class="journalism-card">
                                 <div class="journalism-thumb">
-                                    {thumb}
+                                    <img src=thumb_src class="journalism-img" alt="article thumbnail"/>
+                                    {image.is_none().then(|| view! { <div class="journalism-placeholder-text">"Image coming soon"</div> })}
                                 </div>
                                 <div class="journalism-body">
                                     <p class="journalism-date">{date}</p>
@@ -75,41 +75,37 @@ pub fn JournalismArticlePage() -> impl IntoView {
             {move || {
                 match article() {
                     Some(article) => {
-                        Either::Left({
-                            let display_date = article.display_date.clone();
-                            let title = article.title.clone();
-                            let source_url = article.source_url.clone();
-                            let images = article.images.clone();
-                            let content_html = article.content_html.clone();
-                            view! {
-                                <>
-                                    <p class="text-sm text-gray-500 mb-2">{display_date}</p>
-                                    <h1 class="mb-4 text-4xl font-bold text-gray-900">{title}</h1>
-                                    <div class="mb-6 flex flex-wrap items-center gap-3 text-sm text-gray-600">
-                                        <a class="underline" href="/journalism">"Back to journalism"</a>
-                                        <span class="text-gray-400">"•"</span>
-                                        <a class="underline" href=source_url target="_blank" rel="noreferrer">
-                                            "Original publication"
-                                        </a>
-                                    </div>
-                                    {(!images.is_empty()).then(|| {
-                                        view! {
-                                            <div class="mb-8 flex flex-wrap gap-3">
-                                                {images
-                                                    .iter()
-                                                    .map(|src| view! { <img src=src class="h-32 w-auto rounded" alt="article image"/> })
-                                                    .collect_view()}
-                                            </div>
-                                        }
-                                    })}
-                                    <div class="article-content prose max-w-none" inner_html=content_html></div>
-                                </>
-                            }
-                        })
+                        let display_date = article.display_date.clone();
+                        let title = article.title.clone();
+                        let source_url = article.source_url.clone();
+                        let images = article.images.clone();
+                        let content_html = article.content_html.clone();
+                        view! {
+                            <div>
+                                <p class="text-sm text-gray-500 mb-2">{display_date}</p>
+                                <h1 class="mb-4 text-4xl font-bold text-gray-900">{title}</h1>
+                                <div class="mb-6 flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                                    <a class="underline" href="/journalism">"Back to journalism"</a>
+                                    <span class="text-gray-400">"•"</span>
+                                    <a class="underline" href=source_url target="_blank" rel="noreferrer">
+                                        "Original publication"
+                                    </a>
+                                </div>
+                                {(!images.is_empty()).then(|| {
+                                    view! {
+                                        <div class="mb-8 flex flex-wrap gap-3">
+                                            {images
+                                                .iter()
+                                                .map(|src| view! { <img src=src class="h-32 w-auto rounded" alt="article image"/> })
+                                                .collect_view()}
+                                        </div>
+                                    }
+                                })}
+                                <div class="article-content prose max-w-none" inner_html=content_html></div>
+                            </div>
+                        }
                     }
-                    None => Either::Right(view! { 
-                        <p>"Article not found."</p>
-                    }),
+                    None => view! { <div><p>"Article not found."</p></div> },
                 }
             }}
         </div>
