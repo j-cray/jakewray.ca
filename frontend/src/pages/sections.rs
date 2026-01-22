@@ -29,19 +29,15 @@ pub fn JournalismPage() -> impl IntoView {
                             >
                                 <div class="aspect-[4/3] w-full overflow-hidden rounded-md bg-gray-100">
                                     {if let Some(src) = image {
-                                        view! { 
-                                            <>
-                                                <img src=src class="h-full w-full object-cover" alt="article thumbnail"/>
-                                            </>
-                                        }.into_view()
+                                        Either::Left(view! { 
+                                            <img src=src class="h-full w-full object-cover" alt="article thumbnail"/>
+                                        })
                                     } else {
-                                        view! {
-                                            <>
-                                                <div class="flex h-full items-center justify-center text-sm text-gray-500">
-                                                    "Image coming soon"
-                                                </div>
-                                            </>
-                                        }.into_view()
+                                        Either::Right(view! {
+                                            <div class="flex h-full items-center justify-center text-sm text-gray-500">
+                                                "Image coming soon"
+                                            </div>
+                                        })
                                     }}
                                 </div>
                                 <div class="mt-4 space-y-2">
@@ -71,41 +67,41 @@ pub fn JournalismArticlePage() -> impl IntoView {
             {move || {
                 match article() {
                     Some(article) => {
-                        let display_date = article.display_date.clone();
-                        let title = article.title.clone();
-                        let source_url = article.source_url.clone();
-                        let images = article.images.clone();
-                        let content_html = article.content_html.clone();
-                        view! {
-                            <>
-                                <p class="text-sm text-gray-500 mb-2">{display_date}</p>
-                                <h1 class="mb-4 text-4xl font-bold text-gray-900">{title}</h1>
-                                <div class="mb-6 flex flex-wrap items-center gap-3 text-sm text-gray-600">
-                                    <a class="underline" href="/journalism">"Back to journalism"</a>
-                                    <span class="text-gray-400">"•"</span>
-                                    <a class="underline" href=source_url target="_blank" rel="noreferrer">
-                                        "Original publication"
-                                    </a>
-                                </div>
-                                {(!images.is_empty()).then(|| {
-                                    view! {
-                                        <div class="mb-8 flex flex-wrap gap-3">
-                                            {images
-                                                .iter()
-                                                .map(|src| view! { <img src=src class="h-32 w-auto rounded" alt="article image"/> })
-                                                .collect_view()}
-                                        </div>
-                                    }
-                                })}
-                                <div class="article-content prose max-w-none" inner_html=content_html></div>
-                            </>
-                        }.into_view()
+                        Either::Left({
+                            let display_date = article.display_date.clone();
+                            let title = article.title.clone();
+                            let source_url = article.source_url.clone();
+                            let images = article.images.clone();
+                            let content_html = article.content_html.clone();
+                            view! {
+                                <>
+                                    <p class="text-sm text-gray-500 mb-2">{display_date}</p>
+                                    <h1 class="mb-4 text-4xl font-bold text-gray-900">{title}</h1>
+                                    <div class="mb-6 flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                                        <a class="underline" href="/journalism">"Back to journalism"</a>
+                                        <span class="text-gray-400">"•"</span>
+                                        <a class="underline" href=source_url target="_blank" rel="noreferrer">
+                                            "Original publication"
+                                        </a>
+                                    </div>
+                                    {(!images.is_empty()).then(|| {
+                                        view! {
+                                            <div class="mb-8 flex flex-wrap gap-3">
+                                                {images
+                                                    .iter()
+                                                    .map(|src| view! { <img src=src class="h-32 w-auto rounded" alt="article image"/> })
+                                                    .collect_view()}
+                                            </div>
+                                        }
+                                    })}
+                                    <div class="article-content prose max-w-none" inner_html=content_html></div>
+                                </>
+                            }
+                        })
                     }
-                    None => view! { 
-                        <>
-                            <p>"Article not found."</p>
-                        </>
-                    }.into_view(),
+                    None => Either::Right(view! { 
+                        <p>"Article not found."</p>
+                    }),
                 }
             }}
         </div>
