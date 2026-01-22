@@ -34,11 +34,11 @@ pub fn App() -> impl IntoView {
         <html lang="en">
             <head>
                 <Meta charset="utf-8"/>
-                <Title text="Jake Wray"/>
-                <Meta name="description" content="Journalist, Programmer, Photographer."/>
                 <Meta name="viewport" content="width=device-width, initial-scale=1"/>
-                <Stylesheet id="leptos" href="/pkg/jakewray_ca.css"/>
+                <Meta name="description" content="Journalist, Programmer, Photographer."/>
+                <Title text="Jake Wray"/>
                 <MetaTags/>
+                <Stylesheet id="leptos" href="/pkg/jakewray_ca.css"/>
             </head>
 
             <body>
