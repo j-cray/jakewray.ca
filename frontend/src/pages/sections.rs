@@ -98,9 +98,9 @@ pub fn JournalismArticlePage() -> impl IntoView {
                                 <div class="article-content prose max-w-none" inner_html=content_html></div>
                             </div>
                         }
-                        .into_view()
+                        .into_any()
                     })
-                    .unwrap_or_else(|| view! { <div><p>"Article not found."</p></div> }.into_view())
+                    .unwrap_or_else(|| view! { <div><p>"Article not found."</p></div> }.into_any())
             }}
         </div>
     }
