@@ -2,6 +2,75 @@ use crate::data::journalism;
 use leptos::prelude::*;
 use leptos_router::hooks::use_params_map;
 
+fn strip_tags(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    let mut in_tag = false;
+    for ch in s.chars() {
+        match ch {
+            '<' => in_tag = true,
+            '>' => in_tag = false,
+            _ => if !in_tag { out.push(ch) },
+        }
+    }
+    out.trim().to_string()
+}
+
+fn starts_with_month(s: &str) -> bool {
+    let sm = s.trim_start();
+    const MONTHS: [&str; 21] = [
+        "Jan.", "January", "Feb.", "February", "Mar.", "March", "Apr.", "April",
+        "May", "June", "July", "Aug.", "August", "Sept.", "September", "Oct.",
+        "October", "Nov.", "November", "Dec.", "December",
+    ];
+    MONTHS.iter().any(|m| sm.starts_with(m))
+}
+
+fn extract_between(haystack: &str, start_pat: &str, end_pat: &str, from: usize) -> Option<(String, usize)> {
+    let start_idx = haystack[from..].find(start_pat)? + from;
+    let after = start_idx + start_pat.len();
+    let end_idx = haystack[after..].find(end_pat)? + after;
+    Some((haystack[after..end_idx].to_string(), end_idx + end_pat.len()))
+}
+
+fn extract_subhead(html: &str) -> Option<String> {
+    let (inner, _) = extract_between(html, "<h4", "</h4>", 0)?;
+    // drop attributes in opening tag
+    let open_end = inner.find('>')? + 1;
+    Some(strip_tags(&inner[open_end..]))
+}
+
+fn extract_printed_date(html: &str) -> Option<String> {
+    // Prefer the first <p> after the first </h4>, else the first <p>
+    let after_h4 = html.find("</h4>").map(|idx| idx + 5).unwrap_or(0);
+    let mut pos = after_h4;
+    for _ in 0..5 {
+        if let Some((p_inner, next)) = extract_between(html, "<p", "</p>", pos) {
+            let open_end = p_inner.find('>').map(|i| i + 1).unwrap_or(0);
+            let text = strip_tags(&p_inner[open_end..]);
+            if starts_with_month(&text) { return Some(text); }
+            pos = next;
+        } else { break; }
+    }
+    None
+}
+
+fn extract_body_preview(html: &str) -> Option<String> {
+    // Find paragraphs after the h4; skip date/byline; use the first body paragraph
+    let after_h4 = html.find("</h4>").map(|idx| idx + 5).unwrap_or(0);
+    let mut pos = after_h4;
+    for _ in 0..12 {
+        let (p_inner, next) = extract_between(html, "<p", "</p>", pos)?;
+        let open_end = p_inner.find('>').map(|i| i + 1).unwrap_or(0);
+        let text = strip_tags(&p_inner[open_end..]);
+        let t = text.trim();
+        if !t.is_empty() && !starts_with_month(t) && !t.starts_with("By ") {
+            return Some(t.to_string());
+        }
+        pos = next;
+    }
+    None
+}
+
 #[component]
 pub fn JournalismPage() -> impl IntoView {
     let articles = journalism::all_articles();
@@ -19,24 +88,13 @@ pub fn JournalismPage() -> impl IntoView {
                     .map(|article| {
                         let slug = article.slug.clone();
                         let title = article.title.clone();
-                        let excerpt = article.excerpt.clone();
-                        let preview_text = excerpt
-                            .lines()
-                            .map(str::trim)
-                            .filter(|l| {
-                                let lower = l.to_ascii_lowercase();
-                                !lower.is_empty()
-                                    && !lower.starts_with("photo:")
-                                    && !lower.starts_with("photo by")
-                                    && !lower.starts_with("photos:")
-                                    && !lower.starts_with("caption:")
-                            })
-                            .take(3)
-                            .collect::<Vec<_>>()
-                            .join(" ");
+                        let preview_text = extract_body_preview(&article.content_html)
+                            .unwrap_or_else(|| article.excerpt.clone());
+                        let subhead = extract_subhead(&article.content_html);
                         let image = article.images.get(0).cloned();
                         let thumb_src = image.clone().unwrap_or_else(|| "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='400' height='300' fill='%23e5e7eb'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-size='16' font-family='Inter, sans-serif'>Image coming soon</text></svg>".to_string());
-                        let date = article.display_date.clone();
+                        let date = extract_printed_date(&article.content_html)
+                            .unwrap_or_else(|| article.display_date.clone());
                         view! {
                             <a href=format!("/journalism/{}", slug) class="journalism-card">
                                 <div class="journalism-thumb">
@@ -46,6 +104,7 @@ pub fn JournalismPage() -> impl IntoView {
                                 <div class="journalism-body">
                                     <p class="journalism-date">{date}</p>
                                     <h3 class="journalism-title">{title}</h3>
+                                    {subhead.as_ref().map(|s| view! { <p class="journalism-subhead">{s.clone()}</p> })}
                                     <p class="journalism-excerpt">{preview_text}</p>
                                     <div class="journalism-link">"Read more →"</div>
                                 </div>
@@ -69,7 +128,8 @@ pub fn JournalismArticlePage() -> impl IntoView {
             {move || {
                 article()
                     .map(|article| {
-                        let display_date = article.display_date.clone();
+                        let display_date = extract_printed_date(&article.content_html)
+                            .unwrap_or_else(|| article.display_date.clone());
                         let title = article.title.clone();
                         let source_url = article.source_url.clone();
                         let images = article.images.clone();
