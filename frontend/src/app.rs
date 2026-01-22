@@ -38,6 +38,7 @@ pub fn App() -> impl IntoView {
                 <Meta name="description" content="Journalist, Programmer, Photographer."/>
                 <Meta name="viewport" content="width=device-width, initial-scale=1"/>
                 <Stylesheet id="leptos" href="/pkg/jakewray_ca.css"/>
+                <MetaTags/>
             </head>
 
             <body>
