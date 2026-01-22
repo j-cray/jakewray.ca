@@ -16,7 +16,7 @@ use leptos_router::*;
 #[component]
 pub fn App() -> impl IntoView {
     provide_meta_context();
-    let options = use_context::<leptos::config::LeptosOptions>().unwrap_or_else(|| {
+    let _ = use_context::<leptos::config::LeptosOptions>().unwrap_or_else(|| {
         // Fallback for contexts that don't inject options (e.g., route list gen / client mount).
         // Matches defaults used in backend when env vars are absent.
         leptos::config::LeptosOptions::builder()

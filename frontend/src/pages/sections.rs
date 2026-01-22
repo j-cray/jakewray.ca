@@ -1,6 +1,6 @@
 use crate::data::journalism;
 use leptos::prelude::*;
-use leptos_router::{components::A, hooks::use_params_map};
+use leptos_router::hooks::use_params_map;
 
 #[component]
 pub fn JournalismPage() -> impl IntoView {
@@ -17,16 +17,19 @@ pub fn JournalismPage() -> impl IntoView {
                 {articles
                     .iter()
                     .map(|article| {
+                        let slug = article.slug.clone();
+                        let title = article.title.clone();
+                        let excerpt = article.excerpt.clone();
+                        let date = article.display_date.clone();
+                        let image = article.images.get(0).cloned();
                         view! {
-                            <A
-                                href=format!("/journalism/{}", article.slug)
+                            <a
+                                href=format!("/journalism/{}", slug)
                                 class="block rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
                             >
                                 <div class="aspect-[4/3] w-full overflow-hidden rounded-md bg-gray-100">
-                                    {article
-                                        .images
-                                        .get(0)
-                                        .map(|src| view! { <img src=src class="h-full w-full object-cover" alt=""/> })
+                                    {image
+                                        .map(|src| view! { <img src=src class="h-full w-full object-cover" alt="article thumbnail"/> })
                                         .unwrap_or_else(|| {
                                             view! {
                                                 <div class="flex h-full items-center justify-center text-sm text-gray-500">
@@ -36,13 +39,13 @@ pub fn JournalismPage() -> impl IntoView {
                                         })}
                                 </div>
                                 <div class="mt-4 space-y-2">
-                                    <p class="text-sm text-gray-500">{article.display_date.clone()}</p>
-                                    <h3 class="text-xl font-semibold text-gray-900">{article.title.clone()}</h3>
-                                    <p class="text-gray-700 line-clamp-3 max-h-16 overflow-hidden text-ellipsis">
-                                        {article.excerpt.clone()}
+                                    <p class="text-sm text-gray-500">{date}</p>
+                                    <h3 class="text-xl font-semibold text-gray-900">{title}</h3>
+                                    <p class="text-gray-700 line-clamp-3">
+                                        {excerpt}
                                     </p>
                                 </div>
-                            </A>
+                            </a>
                         }
                     })
                     .collect_view()}
@@ -54,38 +57,46 @@ pub fn JournalismPage() -> impl IntoView {
 #[component]
 pub fn JournalismArticlePage() -> impl IntoView {
     let params = use_params_map();
-    let slug = move || params.with(|p| p.get("slug").cloned().unwrap_or_default());
+    let slug = move || params.with(|p| p.get("slug").map(|s| s.to_string()).unwrap_or_default());
     let article = move || journalism::find_article(&slug());
 
     view! {
         <div class="container py-12 max-w-4xl">
-            {move || match article() {
-                Some(article) => view! {
-                    <p class="text-sm text-gray-500 mb-2">{article.display_date.clone()}</p>
-                    <h1 class="mb-4 text-4xl font-bold text-gray-900">{article.title.clone()}</h1>
-                    <div class="mb-6 flex flex-wrap items-center gap-3 text-sm text-gray-600">
-                        <a class="underline" href="/journalism">"Back to journalism"</a>
-                        <span class="text-gray-400">"•"</span>
-                        <a class="underline" href=article.source_url.clone() target="_blank" rel="noreferrer">
-                            "Original publication"
-                        </a>
-                    </div>
-
-                    {(!article.images.is_empty()).then(|| {
+            {move || {
+                match article() {
+                    Some(article) => {
+                        let display_date = article.display_date.clone();
+                        let title = article.title.clone();
+                        let source_url = article.source_url.clone();
+                        let images = article.images.clone();
+                        let content_html = article.content_html.clone();
                         view! {
-                            <div class="mb-8 flex flex-wrap gap-3">
-                                {article
-                                    .images
-                                    .iter()
-                                    .map(|src| view! { <img src=src class="h-32 w-auto rounded" alt=""/> })
-                                    .collect_view()}
-                            </div>
-                        }
-                    })}
-
-                    <div class="article-content prose max-w-none" inner_html=article.content_html.clone()></div>
-                },
-                None => view! { <p>"Article not found."</p> },
+                            <>
+                                <p class="text-sm text-gray-500 mb-2">{display_date}</p>
+                                <h1 class="mb-4 text-4xl font-bold text-gray-900">{title}</h1>
+                                <div class="mb-6 flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                                    <a class="underline" href="/journalism">"Back to journalism"</a>
+                                    <span class="text-gray-400">"•"</span>
+                                    <a class="underline" href=source_url target="_blank" rel="noreferrer">
+                                        "Original publication"
+                                    </a>
+                                </div>
+                                {(!images.is_empty()).then(|| {
+                                    view! {
+                                        <div class="mb-8 flex flex-wrap gap-3">
+                                            {images
+                                                .iter()
+                                                .map(|src| view! { <img src=src class="h-32 w-auto rounded" alt="article image"/> })
+                                                .collect_view()}
+                                        </div>
+                                    }
+                                })}
+                                <div class="article-content prose max-w-none" inner_html=content_html></div>
+                            </>
+                        }.into_view()
+                    }
+                    None => view! { <p>"Article not found."</p> }.into_view(),
+                }
             }}
         </div>
     }
