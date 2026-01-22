@@ -90,7 +90,6 @@ pub fn JournalismPage() -> impl IntoView {
                         let title = article.title.clone();
                         let preview_text = extract_body_preview(&article.content_html)
                             .unwrap_or_else(|| article.excerpt.clone());
-                        let subhead = extract_subhead(&article.content_html);
                         let image = article.images.get(0).cloned();
                         let thumb_src = image.clone().unwrap_or_else(|| "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='400' height='300' fill='%23e5e7eb'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-size='16' font-family='Inter, sans-serif'>Image coming soon</text></svg>".to_string());
                         let date = extract_printed_date(&article.content_html)
@@ -104,7 +103,6 @@ pub fn JournalismPage() -> impl IntoView {
                                 <div class="journalism-body">
                                     <p class="journalism-date">{date}</p>
                                     <h3 class="journalism-title">{title}</h3>
-                                    {subhead.as_ref().map(|s| view! { <p class="journalism-subhead">{s.clone()}</p> })}
                                     <p class="journalism-excerpt">{preview_text}</p>
                                     <div class="journalism-link">"Read more →"</div>
                                 </div>
@@ -134,6 +132,15 @@ pub fn JournalismArticlePage() -> impl IntoView {
                         let source_url = article.source_url.clone();
                         let images = article.images.clone();
                         let content_html = article.content_html.clone();
+                        // remove first subhead h4 from article content
+                        let content_html = {
+                            if let Some((_, end)) = extract_between(&content_html, "<h4", "</h4>", 0) {
+                                let start = content_html.find("<h4").unwrap_or(0);
+                                let mut s = content_html.clone();
+                                s.replace_range(start..end, "");
+                                s
+                            } else { content_html }
+                        };
                         view! {
                             <div>
                                 <p class="text-sm text-gray-500 mb-2">{display_date}</p>
