@@ -184,6 +184,36 @@ fn linkify_images(html: &str) -> String {
     out
 }
 
+fn italicize_origin_line(html: &str) -> String {
+    let mut out = html.to_string();
+    let mut search_pos = 0;
+
+    while let Some(open_rel) = out[search_pos..].find("<p") {
+        let abs_open = search_pos + open_rel;
+        
+        if let Some(close_bracket_rel) = out[abs_open..].find('>') {
+            let abs_content_start = abs_open + close_bracket_rel + 1;
+            
+            if let Some(close_p_rel) = out[abs_content_start..].find("</p>") {
+                let abs_content_end = abs_content_start + close_p_rel;
+                let content = &out[abs_content_start..abs_content_end];
+                
+                // Case-insensitive check for the specific phrase
+                if content.to_lowercase().contains("originally appeared in") {
+                    let new_content = format!("<em>{}</em>", content);
+                    out.replace_range(abs_content_start..abs_content_end, &new_content);
+                    
+                    search_pos = abs_content_start + new_content.len() + 4;
+                    continue;
+                }
+                
+                search_pos = abs_content_end + 4;
+            } else { break; }
+        } else { search_pos = abs_open + 2; }
+    }
+    out
+}
+
 #[component]
 pub fn JournalismPage() -> impl IntoView {
     let articles = journalism::all_articles();
@@ -256,6 +286,8 @@ pub fn JournalismArticlePage() -> impl IntoView {
                             } else { content_html };
                              let s = replace_date_paragraph(&s, &display_date);
                              let s = bold_byline(&s);
+                             let s = bold_byline(&s);
+                             let s = italicize_origin_line(&s);
                              linkify_images(&s)
                         };
                         view! {
