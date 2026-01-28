@@ -219,7 +219,7 @@ pub fn JournalismPage() -> impl IntoView {
     let articles = journalism::all_articles();
 
     view! {
-        <div class="container py-24">
+        <div class="container py-12">
             <h1 class="text-4xl mb-4">"Journalism"</h1>
             <p class="text-gray-700 mb-10 max-w-3xl">
                 "Reporting on northern communities, Indigenous culture, and public interest stories."
@@ -265,7 +265,7 @@ pub fn JournalismArticlePage() -> impl IntoView {
     let article = move || journalism::find_article(&slug());
 
     view! {
-        <div class="container py-24 max-w-4xl">
+        <div class="container py-12 max-w-4xl">
             {move || {
                 article()
                     .map(|article| {
