@@ -12,6 +12,7 @@ use leptos_meta::*;
 use std::net::SocketAddr;
 use leptos_router::components::*;
 use leptos_router::*;
+use leptos_router::hooks::use_location;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -40,31 +41,54 @@ pub fn App() -> impl IntoView {
 
             <body>
                 <Router>
-                    <div class="min-h-screen flex flex-col bg-gray-50/50">
-                        <Navbar/>
-                        <main class="flex-grow p-4">
-                            <Routes fallback=|| view! { <NotFound/> }>
-                                // Public Routes
-                                <Route path=path!("/") view=HomePage/>
-                                <Route path=path!("/code") view=ProgrammingPage/>
-                                <Route path=path!("/journalism") view=JournalismPage/>
-                                <Route path=path!("/journalism/:slug") view=JournalismArticlePage/>
-                                <Route path=path!("/blog") view=PersonalBlogPage/>
+                    <MainLayout/>
 
-                                // Admin Routes
-                                <Route path=path!("/admin") view=AdminRedirect/>
-                                <Route path=path!("/admin/dashboard") view=AdminDashboard/>
-                                <Route path=path!("/admin/login") view=AdminLoginPage/>
-                                <Route path=path!("/admin/compose") view=AdminComposer/>
-                                <Route path=path!("/admin/sync") view=AdminSyncManager/>
-                                <Route path=path!("/admin/media") view=MediaLibraryPlaceholder/>
-                            </Routes>
-                        </main>
-                        <Footer/>
-                    </div>
                 </Router>
             </body>
         </html>
+    }
+}
+
+
+#[component]
+fn MainLayout() -> impl IntoView {
+    let location = use_location();
+    let theme_class = move || {
+        let path = location.pathname.get();
+        if path.starts_with("/code") {
+            "theme-code"
+        } else if path.starts_with("/blog") {
+            "theme-blog"
+        } else if path.starts_with("/journalism") {
+            "theme-journalism"
+        } else {
+            ""
+        }
+    };
+
+    view! {
+        <div class=move || format!("min-h-screen flex flex-col bg-gray-50/50 {}", theme_class())>
+            <Navbar/>
+            <main class="flex-grow p-4">
+                <Routes fallback=|| view! { <NotFound/> }>
+                    // Public Routes
+                    <Route path=path!("/") view=HomePage/>
+                    <Route path=path!("/code") view=ProgrammingPage/>
+                    <Route path=path!("/journalism") view=JournalismPage/>
+                    <Route path=path!("/journalism/:slug") view=JournalismArticlePage/>
+                    <Route path=path!("/blog") view=PersonalBlogPage/>
+
+                    // Admin Routes
+                    <Route path=path!("/admin") view=AdminRedirect/>
+                    <Route path=path!("/admin/dashboard") view=AdminDashboard/>
+                    <Route path=path!("/admin/login") view=AdminLoginPage/>
+                    <Route path=path!("/admin/compose") view=AdminComposer/>
+                    <Route path=path!("/admin/sync") view=AdminSyncManager/>
+                    <Route path=path!("/admin/media") view=MediaLibraryPlaceholder/>
+                </Routes>
+            </main>
+            <Footer/>
+        </div>
     }
 }
 

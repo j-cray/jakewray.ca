@@ -1,18 +1,31 @@
 use leptos::prelude::*;
+use leptos_router::components::A;
+use leptos_router::hooks::use_location;
 
 #[component]
 pub fn Navbar() -> impl IntoView {
+    let location = use_location();
+    let is_active = move |path: &'static str| {
+        move || {
+            if location.pathname.get().starts_with(path) {
+                "nav-link active"
+            } else {
+                "nav-link"
+            }
+        }
+    };
+
     view! {
         <header class="site-header">
             <div class="container nav-container">
-                <a href="/" class="site-brand">
+                <A href="/" attr:class="site-brand">
                     "Jake Wray"
-                </a>
+                </A>
 
                 <nav class="nav-links">
-                    <a class="nav-link" href="/code">"Code"</a>
-                    <a class="nav-link" href="/journalism">"Journalism"</a>
-                    <a class="nav-link" href="/blog">"Blog"</a>
+                    <A href="/code" attr:class=is_active("/code")>"Code"</A>
+                    <A href="/journalism" attr:class=is_active("/journalism")>"Journalism"</A>
+                    <A href="/blog" attr:class=is_active("/blog")>"Blog"</A>
                 </nav>
             </div>
         </header>
