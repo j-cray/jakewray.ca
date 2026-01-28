@@ -49,14 +49,14 @@
   /* Red 700 */
 }
 
-.theme-about {
-  --primary: #d97706;
-  /* Amber 600 */
-  --primary-dark: #b45309;
-  /* Amber 700 */
-}
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap');
+
+.theme-about {
+  --primary: #ca8a04;
+  /* Yellow 600 */
+  --primary-dark: #a16207;
+  /* Yellow 700 */
+}
 
 * {
   box-sizing: border-box;
