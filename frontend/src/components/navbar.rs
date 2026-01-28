@@ -24,8 +24,9 @@ pub fn Navbar() -> impl IntoView {
 
                 <nav class="nav-links">
                     <A href="/code" attr:class=is_active("/code")>"Code"</A>
-                    <A href="/journalism" attr:class=is_active("/journalism")>"Journalism"</A>
                     <A href="/blog" attr:class=is_active("/blog")>"Blog"</A>
+                    <A href="/journalism" attr:class=is_active("/journalism")>"Journalism"</A>
+                    <A href="/about" attr:class=is_active("/about")>"About Me"</A>
                 </nav>
             </div>
         </header>

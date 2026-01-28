@@ -61,6 +61,8 @@ fn MainLayout() -> impl IntoView {
             "theme-blog"
         } else if path.starts_with("/journalism") {
             "theme-journalism"
+        } else if path.starts_with("/about") {
+            "theme-about"
         } else {
             ""
         }
@@ -77,6 +79,7 @@ fn MainLayout() -> impl IntoView {
                     <Route path=path!("/journalism") view=JournalismPage/>
                     <Route path=path!("/journalism/:slug") view=JournalismArticlePage/>
                     <Route path=path!("/blog") view=PersonalBlogPage/>
+                    <Route path=path!("/about") view=DummyPage/>
 
                     // Admin Routes
                     <Route path=path!("/admin") view=AdminRedirect/>
