@@ -87,7 +87,7 @@ fn replace_date_paragraph(html: &str, new_date: &str) -> String {
                          let end_abs = after_start + end_rel + 4; // </p> len
                           let mut out = html.to_string();
                           // Construct replacement paragraph
-                          let replacement = format!("<p class=\"text-sm text-gray-500 mb-6 mt-8\">{}</p>", new_date);
+                          let replacement = format!("<p class=\"text-sm text-gray-500 mb-6 mt-6\">{}</p>", new_date);
                           out.replace_range(start_abs..end_abs, &replacement);
                           return out;
                     }
@@ -97,6 +97,17 @@ fn replace_date_paragraph(html: &str, new_date: &str) -> String {
         } else { break; }
     }
     html.to_string()
+}
+
+fn bold_byline(html: &str) -> String {
+    // Basic replacement for "By [Name]" pattern in a paragraph
+    // We'll look for <p>By 
+    let mut out = html.to_string();
+    if let Some(start) = out.find("<p>By ") {
+        // found it, let's inject class="font-bold"
+        out.replace_range(start..start+3, "<p class=\"font-bold\">");
+    }
+    out
 }
 
 #[component]
@@ -169,7 +180,8 @@ pub fn JournalismArticlePage() -> impl IntoView {
                                 s.replace_range(start..end, "");
                                 s
                             } else { content_html };
-                             replace_date_paragraph(&s, &display_date)
+                             let s = replace_date_paragraph(&s, &display_date);
+                             bold_byline(&s)
                         };
                         view! {
                             <div class="article-container">
