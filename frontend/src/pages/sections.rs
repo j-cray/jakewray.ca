@@ -100,12 +100,45 @@ fn replace_date_paragraph(html: &str, new_date: &str) -> String {
 }
 
 fn bold_byline(html: &str) -> String {
-    // Basic replacement for "By [Name]" pattern in a paragraph
-    // We'll look for <p>By 
     let mut out = html.to_string();
-    if let Some(start) = out.find("<p>By ") {
-        // found it, let's inject class="font-bold"
-        out.replace_range(start..start+3, "<p class=\"font-bold\">");
+    let mut search_pos = 0;
+    
+    // Loop to find <p...>By ...</p>
+    // We iterate manually to handle string mutation
+    while let Some(open_rel) = out[search_pos..].find("<p") {
+        let abs_open = search_pos + open_rel;
+        
+        // Find end of opening tag >
+        if let Some(close_bracket_rel) = out[abs_open..].find('>') {
+            let abs_content_start = abs_open + close_bracket_rel + 1;
+            
+            // Find closing </p>
+            if let Some(close_p_rel) = out[abs_content_start..].find("</p>") {
+                let abs_content_end = abs_content_start + close_p_rel;
+                let content = &out[abs_content_start..abs_content_end];
+                
+                // Check if content starts with "By "
+                // We use trim() to ignore leading whitespace/newlines
+                if content.trim().starts_with("By ") && content.len() < 100 {
+                    // Inject <strong> wrapping the content
+                    // Note: This replaces the inner content with <strong>...</strong>
+                    let new_content = format!("<strong>{}</strong>", content);
+                    out.replace_range(abs_content_start..abs_content_end, &new_content);
+                    
+                    // Update search_pos to skip past this paragraph
+                    search_pos = abs_content_start + new_content.len() + 4; // +4 for </p>
+                    continue;
+                }
+                
+                search_pos = abs_content_end + 4;
+            } else {
+                // Malformed HTML, just break or skip
+                break;
+            }
+        } else {
+            // Malformed opening tag
+            search_pos = abs_open + 2;
+        }
     }
     out
 }
