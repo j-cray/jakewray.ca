@@ -342,7 +342,6 @@ a {
 .article-content> :last-child {
   margin-bottom: 0;
 }
-}
 
 .article-content img {
   width: 100%;
@@ -549,6 +548,11 @@ textarea {
 
 .font-bold {
   font-weight: 700;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 .py-12 {
